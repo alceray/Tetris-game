@@ -22,6 +22,7 @@ class Block(pg.sprite.Sprite):
         self.rect = self.surf.get_rect(
             center=(random.randint(0,9)*TILE_SIZE+TILE_SIZE/2,0))
         self.speed = BLOCK_SPEED
+        self.count = 0
     def update(self):
         self.rect.move_ip(0,self.speed)
         if self.rect.right > WIDTH:
@@ -30,6 +31,10 @@ class Block(pg.sprite.Sprite):
             self.rect.left = 0
         if self.rect.bottom > HEIGHT:
             self.rect.bottom = HEIGHT
+            if self.count == 0:
+                return True
+            self.count += 1
+        return False
 
 class Tetris:
     def __init__(self):
@@ -63,7 +68,10 @@ class Tetris:
                 if event.key == pg.K_RIGHT:
                     self.block.rect.move_ip(TILE_SIZE,0)
     def update(self):
-        self.block.update()
+        add_block = self.block.update()
+        if add_block:
+            self.block = Block()
+            self.all_sprites.add(self.block)
     def draw(self):
         self.screen.fill(BG_COLOUR)
         self.draw_grid()
