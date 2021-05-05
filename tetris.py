@@ -41,6 +41,7 @@ class Tetris:
         pg.init()
         self.screen = pg.display.set_mode(SCREEN_SIZE)
         self.clock = pg.time.Clock()
+        pg.key.set_repeat(200,100)
     def draw_grid(self):
         for x in range(0,WIDTH,TILE_SIZE):
             pg.draw.line(self.screen,DARKGREY,(x,0),(x,HEIGHT))
