@@ -1,28 +1,15 @@
 import pygame as pg
 import random
-
-BLACK = (0,0,0)
-DARKGREY = (45,45,45)
-BLUE = (0,0,255)
-FPS = 60
-BLOCK_SPEED = 2
-TILE_SIZE = 32
-GRID_WIDTH = 10
-GRID_HEIGHT = 20
-WIDTH = TILE_SIZE * GRID_WIDTH
-HEIGHT = TILE_SIZE * GRID_HEIGHT
-SCREEN_SIZE = (WIDTH,HEIGHT)
-BG_COLOUR = BLACK
+from settings import *
 
 class Block(pg.sprite.Sprite):
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
         self.surf = pg.Surface((TILE_SIZE,TILE_SIZE))
-        self.surf.fill(BLUE)
+        self.surf.fill(random.choice(BLOCK_COLOURS))
         self.rect = self.surf.get_rect(
             center=(random.randint(0,9)*TILE_SIZE+TILE_SIZE/2,0))
         self.speed = BLOCK_SPEED
-        self.count = 0
     def update(self):
         self.rect.move_ip(0,self.speed)
         if self.rect.right > WIDTH:
@@ -31,9 +18,7 @@ class Block(pg.sprite.Sprite):
             self.rect.left = 0
         if self.rect.bottom > HEIGHT:
             self.rect.bottom = HEIGHT
-            if self.count == 0:
-                return True
-            self.count += 1
+            return True
         return False
 
 class Tetris:
