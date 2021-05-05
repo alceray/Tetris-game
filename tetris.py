@@ -1,8 +1,11 @@
 import pygame as pg
+import random
 
 BLACK = (0,0,0)
 DARKGREY = (45,45,45)
+BLUE = (0,0,255)
 FPS = 60
+BLOCK_SPEED = 2
 TILE_SIZE = 32
 GRID_WIDTH = 10
 GRID_HEIGHT = 20
@@ -14,7 +17,19 @@ BG_COLOUR = BLACK
 class Block(pg.sprite.Sprite):
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
-
+        self.surf = pg.Surface((TILE_SIZE,TILE_SIZE))
+        self.surf.fill(BLUE)
+        self.rect = self.surf.get_rect(
+            center=(random.randint(0,9)*TILE_SIZE+TILE_SIZE/2,0))
+        self.speed = BLOCK_SPEED
+    def update(self):
+        self.rect.move_ip(0,self.speed)
+        if self.rect.right > WIDTH:
+            self.rect.right = WIDTH
+        if self.rect.left < 0:
+            self.rect.left = 0
+        if self.rect.bottom > HEIGHT:
+            self.rect.bottom = HEIGHT
 
 class Tetris:
     def __init__(self):
@@ -27,6 +42,9 @@ class Tetris:
         for y in range(0,HEIGHT,TILE_SIZE):
             pg.draw.line(self.screen,DARKGREY,(0,y),(WIDTH,y))
     def run(self):
+        self.all_sprites = pg.sprite.Group()
+        self.block = Block()
+        self.all_sprites.add(self.block)
         self.running = True
         while self.running:
             self.clock.tick(FPS)
@@ -40,13 +58,17 @@ class Tetris:
             elif event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
                     self.running = False
-                elif event.key == pg.K_UP:
-                    self.running = True
+                if event.key == pg.K_LEFT:
+                    self.block.rect.move_ip(-TILE_SIZE,0)
+                if event.key == pg.K_RIGHT:
+                    self.block.rect.move_ip(TILE_SIZE,0)
     def update(self):
-        pass
+        self.block.update()
     def draw(self):
         self.screen.fill(BG_COLOUR)
         self.draw_grid()
+        for sprite in self.all_sprites:
+            self.screen.blit(sprite.surf,sprite.rect)
         pg.display.update()
 
 t = Tetris()
