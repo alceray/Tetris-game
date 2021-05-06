@@ -118,6 +118,8 @@ class Tetris:
                 self.running = False
                 break
 
+#just testing
+
 t = Tetris()
 t.run()
 pg.quit()
