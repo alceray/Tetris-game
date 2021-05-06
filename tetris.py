@@ -36,6 +36,12 @@ class Block(pg.sprite.Sprite):
             if sprite != self and pg.sprite.collide_rect(self,sprite):
                 self.rect.move_ip(-TILE_SIZE,0)
                 break
+    def drop(self,group):
+        max_height = HEIGHT
+        for sprite in group:
+            if sprite != self and sprite.rect.x == self.rect.x and sprite.rect.top < max_height:
+                max_height = sprite.rect.top
+        self.rect.bottom = max_height
 
 class Tetris:
     def __init__(self):
@@ -44,7 +50,6 @@ class Tetris:
         self.clock = pg.time.Clock()
         pg.key.set_repeat(KEY_DELAY,KEY_INTERVAL)
         self.count = 0
-        self.lines = [0] * GRID_HEIGHT
     def draw_grid(self):
         for x in range(0,WIDTH,TILE_SIZE):
             pg.draw.line(self.screen,DARK_GREY,(x,0),(x,HEIGHT))
@@ -71,10 +76,13 @@ class Tetris:
                     self.block.move_left(self.all_sprites)
                 if event.key == pg.K_RIGHT:
                     self.block.move_right(self.all_sprites)
+                if event.key == pg.K_SPACE:
+                    self.block.drop(self.all_sprites)
     def update(self):
         add_block = self.block.update(self.all_sprites)
         self.line_clear()
         if add_block:
+            self.reach_top()
             self.count += 1
             self.block = Block(self.count)
             self.all_sprites.add(self.block)
@@ -89,13 +97,13 @@ class Tetris:
         for sprite in self.all_sprites:
             row = sprite.rect.top//TILE_SIZE
             self.lines[row] += 1
-        if GRID_WIDTH in self.lines:
+        if GRID_WIDTH + 1 in self.lines:
             return True
         return False
     def line_clear(self):
         if self.check_line_clear():
             for row,num in enumerate(self.lines):
-                if num == GRID_WIDTH:
+                if num == GRID_WIDTH + 1:
                     self.remove_row(row)
     def remove_row(self,row):
         for sprite in self.all_sprites:
@@ -104,6 +112,11 @@ class Tetris:
                 self.all_sprites.remove(sprite)
             elif cur_row < row: 
                 sprite.rect.y += TILE_SIZE
+    def reach_top(self):
+        for sprite in self.all_sprites:
+            if sprite.rect.top == 0:
+                self.running = False
+                break
 
 t = Tetris()
 t.run()
