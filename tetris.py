@@ -65,13 +65,13 @@ class Tetris:
         for sprite in self.all_sprites:
             row = sprite.rect.top//TILE_SIZE
             self.lines[row] += 1
-        if GRID_WIDTH + 1 in self.lines:
+        if GRID_WIDTH in self.lines:
             return True
         return False
     def line_clear(self):
         if self.check_line_clear():
             for row,num in enumerate(self.lines):
-                if num == GRID_WIDTH + 1:
+                if num == GRID_WIDTH:
                     self.remove_row(row)
     def remove_row(self,row):
         for sprite in self.all_sprites:

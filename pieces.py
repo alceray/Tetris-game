@@ -10,6 +10,10 @@ def create_blocks(coord,len,x,y,col):
         lob[i].surf.fill(col)
     return lob
 
+def adjust_blocks(piece,coord,len,x,y):
+    for i in range(len):
+        piece[i].rect.center = (x+coord[i][0]*TILE_SIZE, y-coord[i][1]*TILE_SIZE)
+
 def get_landscape(group):
     ls = [HEIGHT] * GRID_WIDTH
     for block in group:
@@ -24,7 +28,7 @@ def colliding(b,group):
     # print('left')
     # print(b.rect.left)
     # print('right')
-    print(b.rect.right)
+    # print(b.rect.right)
     if b.rect.bottom > HEIGHT:
         return True
     if b.rect.left < 0:
@@ -54,6 +58,8 @@ class IBlock:
     def update(self,group):
         for i in range(self.len):
             self.piece[i].rect.move_ip(0,self.speed)
+            # if colliding(self.piece[i],group):
+            #     print('collides')
         if self.piece[3].rect.bottom > HEIGHT:
             diff = self.piece[3].rect.bottom - HEIGHT 
             for i in range(self.len):
@@ -117,6 +123,9 @@ class IBlock:
                 self.y = y
                 return True
         return False
+    def adjust_blocks(self,coord):
+        for i in range(self.len):
+            self.piece[i].rect.center = (self.x+coord[i][0]*TILE_SIZE, self.y-coord[i][1]*TILE_SIZE)    
     def rotate(self,group,clockwise):
         can_rotate = self.update_coord(group)
         if can_rotate:
@@ -124,4 +133,4 @@ class IBlock:
                 self.pos = (self.pos + 1) % self.len
             else:
                 self.pos = (self.pos - 1) % self.len
-            self.piece = create_blocks(self.coord[self.pos],self.len,self.x,self.y,CYAN)
+            adjust_blocks(self.piece,self.coord[self.pos],self.len,self.x,self.y)
