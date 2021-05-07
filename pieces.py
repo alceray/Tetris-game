@@ -70,33 +70,21 @@ class IBlock:
                     return True
         return False
     def move_left(self,group):
-        moved1 = self.piece[0].move_left(group)
-        moved2 = self.piece[1].move_left(group)
-        moved3 = self.piece[2].move_left(group)
-        moved4 = self.piece[3].move_left(group)
-        if not all((moved1,moved2,moved3,moved4)):
-            if moved1:
-                self.piece[0].rect.move_ip(TILE_SIZE,0)
-            if moved2:
-                self.piece[1].rect.move_ip(TILE_SIZE,0)
-            if moved3:
-                self.piece[2].rect.move_ip(TILE_SIZE,0)
-            if moved4:
-                self.piece[3].rect.move_ip(TILE_SIZE,0)
+        moved = list()
+        for i in range(self.len):
+            moved.append(self.piece[i].move_left(group))
+        if not all(moved):
+            for i in range(self.len):
+                if moved[i]:
+                    self.piece[i].rect.move_ip(TILE_SIZE,0)
     def move_right(self,group):
-        moved1 = self.piece[0].move_right(group)
-        moved2 = self.piece[1].move_right(group)
-        moved3 = self.piece[2].move_right(group)
-        moved4 = self.piece[3].move_right(group)
-        if not all((moved1,moved2,moved3,moved4)):
-            if moved1:
-                self.piece[0].rect.move_ip(-TILE_SIZE,0)
-            if moved2:
-                self.piece[1].rect.move_ip(-TILE_SIZE,0)
-            if moved3:
-                self.piece[2].rect.move_ip(-TILE_SIZE,0)
-            if moved4:
-                self.piece[3].rect.move_ip(-TILE_SIZE,0)
+        moved = list()
+        for i in range(self.len):
+            moved.append(self.piece[i].move_right(group))
+        if not all(moved):
+            for i in range(self.len):
+                if moved[i]:
+                    self.piece[i].rect.move_ip(-TILE_SIZE,0)
     def update_coord(self,group):
         if self.pos == 0:
             x = self.piece[0].rect.centerx
