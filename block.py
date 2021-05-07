@@ -6,18 +6,6 @@ class Block(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self)
         self.surf = pg.Surface((TILE_SIZE,TILE_SIZE))
         self.rect = self.surf.get_rect(center=(x,y))
-    #     self.speed = B_START_SPEED + (count//B_SPEED_INCREMENT) * B_SPEED_UP
-    # def update(self,group):
-    #     self.rect.move_ip(0,self.speed)
-    #     if self.rect.bottom > HEIGHT:
-    #         self.rect.bottom = HEIGHT
-    #         return True
-    #     for block in group:
-    #         for i in range(block.len):
-    #             if pg.sprite.collide_rect(self,block.piece[i]):
-    #                 self.rect.bottom = block.piece[i].rect.top
-    #                 return True
-    #     return False
     def move_left(self,group):
         self.rect.move_ip(-TILE_SIZE,0)
         if self.rect.left < 0:
