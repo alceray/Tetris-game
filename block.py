@@ -6,12 +6,6 @@ class Block(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self)
         self.surf = pg.Surface((TILE_SIZE,TILE_SIZE))
         self.rect = self.surf.get_rect(center=(x,y))
-    def drop(self,group):
-        max_height = HEIGHT
-        for sprite in group:
-            if sprite.rect.x == self.rect.x and sprite.rect.top < max_height:
-                max_height = sprite.rect.top
-        self.rect.bottom = max_height
 
 class BlockTypes:
     def __init__(self,x,y,len,pos,coord,col,speed):
