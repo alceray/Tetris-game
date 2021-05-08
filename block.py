@@ -36,16 +36,14 @@ class BlockTypes:
         if b.rect.right > WIDTH:
             return True
         for block in group:
-            for i in range(block.len):
-                if pg.sprite.collide_rect(b,block.piece[i]):
-                    return True
+            if pg.sprite.collide_rect(b,block):
+                return True
         return False
     def get_landscape(self,group):
         ls = [HEIGHT] * GRID_WIDTH
         for block in group:
-            for i in range(block.len):
-                col = block.piece[i].rect.left//TILE_SIZE
-                ls[col] = min(ls[col],block.piece[i].rect.top)
+            col = block.rect.left//TILE_SIZE
+            ls[col] = min(ls[col],block.rect.top)
         return ls
     def update(self,group):
         for i in range(self.len):

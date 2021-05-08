@@ -17,7 +17,7 @@ class Tetris:
         for y in range(0,HEIGHT,TILE_SIZE):
             pg.draw.line(self.screen,DARK_GREY,(0,y),(WIDTH,y))
     def run(self):
-        self.all_sprites = set()
+        self.all_sprites = pg.sprite.Group()
         self.block = IBlock(self.count)
         self.running = True
         while self.running:
@@ -44,29 +44,30 @@ class Tetris:
                     self.block.rotate(self.all_sprites,clockwise=False)
     def update(self):
         add_block = self.block.update(self.all_sprites)
-        #self.line_clear()
+        self.line_clear()
         if add_block:
-            #self.reach_top()
-            self.all_sprites.add(self.block)
+            for block in self.block.piece:
+                self.all_sprites.add(block)
+            self.reach_top()
             self.count += 1
             self.block = IBlock(self.count)
     def draw(self):
         self.screen.fill(BG_COLOUR)
         self.draw_grid()
-        for block in self.all_sprites:
-            self.draw_block(block)
-        self.draw_block(self.block)
+        for sprite in self.all_sprites:
+            self.screen.blit(sprite.surf,sprite.rect)
+        self.draw_block()
         pg.display.update()
-    def draw_block(self,block):
-        for i in range(block.len):
-            self.screen.blit(block.piece[i].surf,block.piece[i].rect)
+    def draw_block(self):
+        for i in range(self.block.len):
+            self.screen.blit(self.block.piece[i].surf,self.block.piece[i].rect)
     def check_line_clear(self):
         self.lines = [0] * GRID_HEIGHT
-        for block in self.all_sprites:
-            for i in range(block.len):
-                row = block.piece[i].rect.top//TILE_SIZE
-                self.lines[row] += 1
+        for sprite in self.all_sprites:
+            row = sprite.rect.top//TILE_SIZE
+            self.lines[row] += 1
         if GRID_WIDTH in self.lines:
+            #print(list(enumerate(self.lines)))
             return True
         return False
     def line_clear(self):
@@ -76,13 +77,11 @@ class Tetris:
                     self.remove_row(row)
     def remove_row(self,row):
         for sprite in self.all_sprites:
-            len = block.len
-            for i in range(block.len):
-                cur_row = block.piece[i].rect.top//TILE_SIZE
-                if cur_row == row: 
-                    block.piece.pop(i)
-                elif cur_row < row: 
-                    sprite.rect.y += TILE_SIZE
+            cur_row = sprite.rect.top//TILE_SIZE
+            if cur_row == row: 
+                self.all_sprites.remove(sprite)
+            elif cur_row < row: 
+                sprite.rect.y += TILE_SIZE
     def reach_top(self):
         for sprite in self.all_sprites:
             if sprite.rect.top == 0:
