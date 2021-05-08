@@ -13,7 +13,7 @@ ORANGE = (255,127,0)
 GAME_PIECES = {
     "IBlock": {
         "Col" : CYAN, 
-        "Width" : 4, 
+        "Length" : 4, 
         "Coord" : (((0,2),(1,2),(2,2),(3,2)),\
                         ((2,3),(2,2),(2,1),(2,0)),\
                             ((0,1),(1,1),(2,1),(3,1)),\
@@ -21,12 +21,12 @@ GAME_PIECES = {
     },
     "OBlock": {
         "Col" : YELLOW, 
-        "Width" : 2, 
+        "Length" : 2, 
         "Coord" : (((0,0),(1,0),(0,1),(1,1)),)
     }, 
     "RBlock": {
         "Col" : BLUE, 
-        "Width" : 3,
+        "Length" : 3,
         "Coord" : (((0,2),(0,1),(1,1),(2,1)),\
                         ((1,0),(1,1),(1,2),(2,2)),\
                             ((0,1),(1,1),(2,1),(2,0)),\
@@ -34,7 +34,7 @@ GAME_PIECES = {
     },
     "LBlock": { 
         "Col" : ORANGE, 
-        "Width" : 3, 
+        "Length" : 3, 
         "Coord" : (((0,1),(1,1),(2,1),(2,2)),\
                         ((1,0),(1,1),(1,2),(2,0)),\
                             ((0,0),(0,1),(1,1),(2,1)),\
@@ -42,7 +42,7 @@ GAME_PIECES = {
     },
     "SBlock": {
         "Col" : GREEN, 
-        "Width" : 3, 
+        "Length" : 3, 
         "Coord" : (((0,1),(1,1),(1,2),(2,2)),\
                         ((1,1),(1,2),(2,0),(2,1)),\
                             ((0,0),(1,0),(1,1),(2,1)),\
@@ -50,7 +50,7 @@ GAME_PIECES = {
     },
     "TBlock": {
         "Col" : PURPLE, 
-        "Width" : 3, 
+        "Length" : 3, 
         "Coord" : (((0,0),(1,0),(2,0),(1,1)),\
                         ((0,0),(0,1),(0,2),(1,1)),\
                             ((0,2),(1,2),(2,2),(1,1)),\
@@ -58,7 +58,7 @@ GAME_PIECES = {
     },
     "ZBlock": {
         "Col" : RED, 
-        "Width" : 3,
+        "Length" : 3,
         "Coord" : (((0,2),(1,1),(1,2),(2,1)),\
                         ((1,1),(1,0),(2,2),(2,1)),\
                             ((0,1),(1,0),(1,1),(2,0)),\
@@ -81,4 +81,3 @@ HEIGHT = TILE_SIZE * GRID_HEIGHT # 640
 SCREEN_SIZE = (WIDTH,HEIGHT) # (320,640)
 BG_COLOUR = BLACK
 BLOCK_COLOURS = [CYAN,YELLOW,PURPLE,GREEN,RED,BLUE,ORANGE]
-PIECES = ["IBlock", "OBlock", "RBlock", "LBlock", "SBlock", "TBlock", "ZBlock"]
