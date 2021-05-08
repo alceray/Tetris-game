@@ -100,9 +100,7 @@ class BlockTypes:
                     new_pos = (i-1)%self.len
                 new_coord = list(set(self.coord[new_pos]).difference(self.coord[i]))
                 for new_x,new_y in new_coord:
-                    print(new_y)
                     if self.colliding(Block(x+new_x*TILE_SIZE,y-new_y*TILE_SIZE),group):
-                        print('collides')
                         return
                 self.x = x
                 self.y = y
