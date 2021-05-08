@@ -62,9 +62,10 @@ class Tetris:
             self.screen.blit(block.piece[i].surf,block.piece[i].rect)
     def check_line_clear(self):
         self.lines = [0] * GRID_HEIGHT
-        for sprite in self.all_sprites:
-            row = sprite.rect.top//TILE_SIZE
-            self.lines[row] += 1
+        for block in self.all_sprites:
+            for i in range(block.len):
+                row = block.piece[i].rect.top//TILE_SIZE
+                self.lines[row] += 1
         if GRID_WIDTH in self.lines:
             return True
         return False
@@ -75,11 +76,13 @@ class Tetris:
                     self.remove_row(row)
     def remove_row(self,row):
         for sprite in self.all_sprites:
-            cur_row = sprite.rect.top//TILE_SIZE
-            if cur_row == row: 
-                self.all_sprites.remove(sprite)
-            elif cur_row < row: 
-                sprite.rect.y += TILE_SIZE
+            len = block.len
+            for i in range(block.len):
+                cur_row = block.piece[i].rect.top//TILE_SIZE
+                if cur_row == row: 
+                    block.piece.pop(i)
+                elif cur_row < row: 
+                    sprite.rect.y += TILE_SIZE
     def reach_top(self):
         for sprite in self.all_sprites:
             if sprite.rect.top == 0:
