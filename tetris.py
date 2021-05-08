@@ -1,6 +1,5 @@
 import pygame as pg
 import random
-from pieces import *
 from settings import *
 from block import Block
 
@@ -18,7 +17,8 @@ class Tetris:
             pg.draw.line(self.screen,DARK_GREY,(0,y),(WIDTH,y))
     def run(self):
         self.all_sprites = pg.sprite.Group()
-        self.block = self.choose_block()
+        self.type = random.choice(list(GAME_PIECES.keys()))
+        self.block = Piece(self.count, self.type)
         self.running = True
         while self.running:
             self.clock.tick(FPS)
@@ -50,23 +50,8 @@ class Tetris:
                 self.all_sprites.add(block)
             self.reach_top()
             self.count += 1
-            self.block = self.choose_block()
-    def choose_block(self):
-        self.type = random.randint(0,6)
-        if self.type == 0:
-            return IBlock(self.count)
-        elif self.type == 1:
-            return Square(self.count)
-        elif self.type == 2:
-            return LBlock(self.count)
-        elif self.type == 3:
-            return RBlock(self.count)
-        elif self.type == 4:
-            return SBlock(self.count)
-        elif self.type == 5:
-            return TBlock(self.count)
-        elif self.type == 6:
-            return ZBlock(self.count)
+            self.type = random.choice(list(GAME_PIECES.keys()))
+            self.block = Piece(self.count, self.type)
     def draw(self):
         self.screen.fill(BG_COLOUR)
         self.draw_grid()
