@@ -67,7 +67,6 @@ class Tetris:
             row = sprite.rect.top//TILE_SIZE
             self.lines[row] += 1
         if GRID_WIDTH in self.lines:
-            #print(list(enumerate(self.lines)))
             return True
         return False
     def line_clear(self):

@@ -8,7 +8,7 @@ class Block(pg.sprite.Sprite):
         self.rect = self.surf.get_rect(center=(x,y))
 
 class BlockTypes:
-    def __init__(self,x,y,len,pos,coord,col,speed):
+    def __init__(self,x,y,len,pos,coord,col,count):
         self.x = x
         self.y = y
         self.len = len
@@ -16,7 +16,7 @@ class BlockTypes:
         self.coord = coord
         self.col = col
         self.piece = self.create_blocks()
-        self.speed = speed
+        self.speed = B_START_SPEED + (count//B_SPEED_INCREMENT) * B_SPEED_UP
     def create_blocks(self):
         blocks = list()
         for i in range(self.len):
