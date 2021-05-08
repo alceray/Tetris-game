@@ -89,3 +89,23 @@ class BlockTypes:
                     min_dist = min(min_dist,landscape[j]-self.piece[i].rect.bottom)
         for i in range(self.len):
             self.piece[i].rect.bottom += min_dist
+    def rotate(self,group,clockwise):
+        for i in range(self.len):
+            if self.pos == i:
+                x = self.piece[i].rect.centerx-self.coord[i][i][0]*TILE_SIZE
+                y = self.piece[i].rect.centery+self.coord[i][i][1]*TILE_SIZE
+                if clockwise:
+                    new_pos = (i+1)%self.len
+                else:
+                    new_pos = (i-1)%self.len
+                new_coord = list(set(self.coord[new_pos]).difference(self.coord[i]))
+                for new_x,new_y in new_coord:
+                    print(new_y)
+                    if self.colliding(Block(x+new_x*TILE_SIZE,y-new_y*TILE_SIZE),group):
+                        print('collides')
+                        return
+                self.x = x
+                self.y = y
+                self.pos = new_pos
+                self.adjust_blocks()
+                return

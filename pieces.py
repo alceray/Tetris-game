@@ -20,43 +20,6 @@ class IBlock(BlockTypes):
         super().move_right(group)
     def drop(self,group):
         super().drop(group)
-    def update_coord(self,group):
-        if self.pos == 0:
-            x = self.piece[0].rect.centerx
-            y = self.piece[0].rect.centery + 2*TILE_SIZE
-            if not super().colliding(Block(x+2*TILE_SIZE,y),group):
-                self.x = x
-                self.y = y
-                return True
-        elif self.pos == 1:
-            x = self.piece[3].rect.centerx - 2*TILE_SIZE
-            y = self.piece[3].rect.centery
-            if not super().colliding(Block(x,y-TILE_SIZE),group) and \
-                not super().colliding(Block(x+3*TILE_SIZE,y-TILE_SIZE),group):
-                self.x = x
-                self.y = y
-                return True
-        elif self.pos == 2:
-            x = self.piece[0].rect.centerx
-            y = self.piece[0].rect.centery + TILE_SIZE
-            if not super().colliding(Block(x+TILE_SIZE,y),group):
-                self.x = x
-                self.y = y
-                return True
-        elif self.pos == 3:
-            x = self.piece[3].rect.centerx - TILE_SIZE
-            y = self.piece[3].rect.centery
-            if not super().colliding(Block(x,y-2*TILE_SIZE),group) and \
-                not super().colliding(Block(x+3*TILE_SIZE,y-2*TILE_SIZE),group):
-                self.x = x
-                self.y = y
-                return True
-        return False
     def rotate(self,group,clockwise):
-        can_rotate = self.update_coord(group)
-        if can_rotate:
-            if clockwise:
-                self.pos = (self.pos + 1) % self.len
-            else:
-                self.pos = (self.pos - 1) % self.len
-            super().adjust_blocks()
+        super().rotate(group,clockwise)
+    
