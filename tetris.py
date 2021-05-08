@@ -1,7 +1,7 @@
 import pygame as pg
 import random
 from settings import *
-from block import Block
+from block import *
 
 class Tetris:
     def __init__(self):

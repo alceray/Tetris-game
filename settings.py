@@ -9,7 +9,23 @@ GREEN = (0,255,0)
 RED = (255,0,0)
 ORANGE = (255,127,0)
 
-# Game Pieces and info
+# game settings
+FPS = 60
+B_START_SPEED = 2
+B_SPEED_UP = 0.2
+B_SPEED_INCREMENT = 20
+KEY_DELAY = 200
+KEY_INTERVAL = 100
+TILE_SIZE = 32
+GRID_WIDTH = 10
+GRID_HEIGHT = 20
+WIDTH = TILE_SIZE * GRID_WIDTH # 320
+HEIGHT = TILE_SIZE * GRID_HEIGHT # 640
+SCREEN_SIZE = (WIDTH,HEIGHT) # (320,640)
+BG_COLOUR = BLACK
+BLOCK_COLOURS = [CYAN,YELLOW,PURPLE,GREEN,RED,BLUE,ORANGE]
+
+# Game pieces
 GAME_PIECES = {
     "IBlock": {
         "Col" : CYAN, 
@@ -22,7 +38,10 @@ GAME_PIECES = {
     "OBlock": {
         "Col" : YELLOW, 
         "Length" : 2, 
-        "Coord" : (((0,0),(1,0),(0,1),(1,1)),)
+        "Coord" : (((0,0),(1,0),(0,1),(1,1)),\
+                        ((0,0),(1,0),(0,1),(1,1)),\
+                            ((0,0),(1,0),(0,1),(1,1)),\
+                                ((0,0),(1,0),(0,1),(1,1)))
     }, 
     "RBlock": {
         "Col" : BLUE, 
@@ -51,10 +70,10 @@ GAME_PIECES = {
     "TBlock": {
         "Col" : PURPLE, 
         "Length" : 3, 
-        "Coord" : (((0,0),(1,0),(2,0),(1,1)),\
-                        ((0,0),(0,1),(0,2),(1,1)),\
-                            ((0,2),(1,2),(2,2),(1,1)),\
-                                ((2,0),(2,1),(2,2),(1,1)))
+        "Coord" : (((0,1),(1,1),(2,1),(1,2)),\
+                        ((1,0),(1,1),(1,2),(2,1)),\
+                            ((0,1),(1,1),(2,1),(1,0)),\
+                                ((1,0),(1,1),(1,2),(0,1)))
     },
     "ZBlock": {
         "Col" : RED, 
@@ -65,19 +84,3 @@ GAME_PIECES = {
                                 ((0,0),(0,1),(1,1),(1,2)))
     }
 }
-
-# game settings
-FPS = 60
-B_START_SPEED = 3
-B_SPEED_UP = 0.2
-B_SPEED_INCREMENT = 10
-KEY_DELAY = 200
-KEY_INTERVAL = 100
-TILE_SIZE = 32
-GRID_WIDTH = 10
-GRID_HEIGHT = 20
-WIDTH = TILE_SIZE * GRID_WIDTH # 320
-HEIGHT = TILE_SIZE * GRID_HEIGHT # 640
-SCREEN_SIZE = (WIDTH,HEIGHT) # (320,640)
-BG_COLOUR = BLACK
-BLOCK_COLOURS = [CYAN,YELLOW,PURPLE,GREEN,RED,BLUE,ORANGE]

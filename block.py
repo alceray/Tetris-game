@@ -1,5 +1,6 @@
 import pygame as pg
 from settings import *
+import random
 
 class Block(pg.sprite.Sprite):
     def __init__(self,x,y):
