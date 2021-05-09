@@ -119,10 +119,17 @@ class Piece(BlockTypes):
     def update(self,group):
         return super().update(group)
     def move_left(self,group):
+        #clock = pg.time.Clock()
         super().move_left(group)
+        #clock.tick(14)
     def move_right(self,group):
+        #clock = pg.time.Clock()
         super().move_right(group)
+        #clock.tick(14)
     def drop(self,group):
+        #clock = pg.time.Clock()
         super().drop(group)
+        #clock.tick(7)
     def rotate(self,group,clockwise):
         super().rotate(group, clockwise)
+        
