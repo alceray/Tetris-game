@@ -24,11 +24,13 @@ class Tetris:
         self.right = False
         self.z = False
         self.up = False
+        self.drop = False
         self.down = False
         self.cooldown = 0
         self.rotate_cd = 0
         while self.running:
             self.clock.tick(FPS)
+            self.draw_grid()
             self.events()
             self.update()
             self.draw()
@@ -44,7 +46,7 @@ class Tetris:
                 if event.key == pg.K_RIGHT:
                     self.right = True
                 if event.key == pg.K_SPACE:
-                    self.down = True
+                    self.drop = True
                 if event.key == pg.K_UP:
                     self.up = True
                 if event.key == pg.K_z:
@@ -53,17 +55,21 @@ class Tetris:
                     self.pause()
                 if event.key == pg.K_LSHIFT:
                     self.pause()
+                if event.key == pg.K_DOWN:
+                    self.down = True
             elif event.type == pg.KEYUP:
                 if event.key == pg.K_LEFT:
                     self.left = False
                 if event.key == pg.K_RIGHT:
                     self.right = False
                 if event.key == pg.K_SPACE:
-                    self.down = False
+                    self.drop = False
                 if event.key == pg.K_UP:
                     self.up = False
                 if event.key == pg.K_z:
                     self.z = False
+                if event.key == pg.K_DOWN:
+                    self.down = False
         self.key_count = 0 
         if self.cooldown < 0:
             if self.left:
@@ -74,7 +80,7 @@ class Tetris:
                 self.block.move_right(self.all_sprites)
                 self.cooldown += COOLDOWN_TIME
                 self.key_count += 1
-            if self.down:
+            if self.drop:
                 self.block.drop(self.all_sprites)
                 self.cooldown += 5*COOLDOWN_TIME
             if self.z:
@@ -104,10 +110,13 @@ class Tetris:
                     self.rotate_cd -= 2*FPS
                 else:
                     self.rotate_cd -= FPS
+            if self.down:
+                self.block.soft_drop(self.all_sprites,10*self.block.speed)
+                self.cooldown += COOLDOWN_TIME
         else:
             self.cooldown -= FPS
     def update(self):
-        add_block = self.block.update(self.all_sprites)
+        add_block = self.block.update(self.all_sprites,self.block.speed)
         self.line_clear()
         if add_block:
             for block in self.block.piece:
@@ -118,14 +127,14 @@ class Tetris:
             self.block = BlockTypes(self.count, self.type)
     def draw(self):
         self.screen.fill(BG_COLOUR)
-        self.draw_grid()
         for sprite in self.all_sprites:
             self.screen.blit(sprite.surf,sprite.rect)
+        self.draw_grid()
         self.draw_block()
         pg.display.update()
     def draw_block(self):
-        for i in range(self.block.size):
-            self.screen.blit(self.block.piece[i].surf,self.block.piece[i].rect)
+        for block in self.block.piece:
+            self.screen.blit(block.surf,block.rect)
     def check_line_clear(self):
         self.lines = [0] * GRID_HEIGHT
         for sprite in self.all_sprites:
