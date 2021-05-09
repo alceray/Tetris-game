@@ -29,8 +29,10 @@ class Tetris:
         # if only the second option is used delete self.Time to self.rotate_interval
         self.Time = INITIAL_TIME
         self.lastTime = INITIAL_TIME
+        self.dropTime = INITIAL_TIME
         self.interval = MOVE_TIME
         self.rotate_interval = ROTATE_TIME
+        self.drop_interval = DROP_TIME
         while self.running:
             self.clock.tick(FPS)
             self.events()
@@ -64,12 +66,14 @@ class Tetris:
                 self.block.move_right(self.all_sprites)
         if (pg.time.get_ticks() > self.Time + self.rotate_interval):
             self.Time = pg.time.get_ticks()
-            if pressed[pg.K_SPACE]:
-                self.block.drop(self.all_sprites)
             if pressed[pg.K_UP]:
                 self.block.rotate(self.all_sprites,clockwise=True)
             if pressed[pg.K_z]:
                 self.block.rotate(self.all_sprites,clockwise=False)
+        if pressed[pg.K_SPACE] and \
+            (pg.time.get_ticks() > self.dropTime + self.drop_interval):
+            self.dropTime = pg.time.get_ticks()
+            self.block.drop(self.all_sprites)
         pg.event.pump()
     # if this option is upcommented, remember to uncomment the clock ticks in 
     # block.py Piece Class movement functions, note it has not been added for
