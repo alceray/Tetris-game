@@ -26,67 +26,68 @@ class Tetris:
         self.up_z = False
         self.up_up = False
         self.down = False
+        self.cooldown = 0
         # if only the second option is used delete self.Time to self.rotate_interval
-        self.cwTime = INITIAL_TIME
-        self.ccwTime = INITIAL_TIME
-        self.Time = INITIAL_TIME
-        self.lastTime = INITIAL_TIME
-        self.dropTime = INITIAL_TIME
-        self.leftTime = INITIAL_TIME
-        self.rightTime = INITIAL_TIME
-        self.interval = MOVE_TIME
-        self.rotate_interval = ROTATE_TIME
-        self.drop_interval = DROP_TIME
+        # self.cwTime = INITIAL_TIME
+        # self.ccwTime = INITIAL_TIME
+        # self.Time = INITIAL_TIME
+        # self.lastTime = INITIAL_TIME
+        # self.dropTime = INITIAL_TIME
+        # self.leftTime = INITIAL_TIME
+        # self.rightTime = INITIAL_TIME
+        # self.interval = MOVE_TIME
+        # self.rotate_interval = ROTATE_TIME
+        # self.drop_interval = DROP_TIME
         while self.running:
             self.clock.tick(FPS)
             self.events()
             self.update()
             self.draw()
-    def events(self):
-        pressed = pg.key.get_pressed()
-        if (pg.time.get_ticks() > self.lastTime + self.interval) and \
-            (pg.time.get_ticks() > self.Time + self.rotate_interval):
-            self.lastTime = pg.time.get_ticks()
-            self.Time = pg.time.get_ticks()
-            if pressed[pg.K_LEFT] and pressed[pg.K_UP]:
-                self.block.move_left(self.all_sprites)
-                self.block.rotate(self.all_sprites,clockwise=True)
-            if pressed[pg.K_RIGHT] and pressed[pg.K_UP]:
-                self.block.move_right(self.all_sprites)
-                self.block.rotate(self.all_sprites,clockwise=True)
-            if pressed[pg.K_LEFT] and pressed[pg.K_z]:
-                self.block.move_left(self.all_sprites)
-                self.block.rotate(self.all_sprites,clockwise=False)
-            if pressed[pg.K_RIGHT] and pressed[pg.K_z]:
-                self.block.move_right(self.all_sprites)
-                self.block.rotate(self.all_sprites,clockwise=False)
-        if pressed[pg.K_ESCAPE]:
-            self.running = False 
-        if pressed[pg.K_LEFT] and \
-            (pg.time.get_ticks() > self.leftTime + self.interval):
-            self.leftTime = pg.time.get_ticks()
-            self.block.move_left(self.all_sprites)
-        if pressed[pg.K_RIGHT] and \
-            (pg.time.get_ticks() > self.rightTime + self.interval):
-            self.rightTime = pg.time.get_ticks()
-            self.block.move_right(self.all_sprites)
-        if pressed[pg.K_UP] and \
-            (pg.time.get_ticks() > self.cwTime + self.rotate_interval):
-            self.cwTime = pg.time.get_ticks()
-            self.block.rotate(self.all_sprites,clockwise=True)
-        if pressed[pg.K_z] and \
-            (pg.time.get_ticks() > self.ccwTime + self.rotate_interval):
-            self.ccwTime = pg.time.get_ticks()
-            self.block.rotate(self.all_sprites,clockwise=False)
-        if pressed[pg.K_SPACE] and \
-            (pg.time.get_ticks() > self.dropTime + self.drop_interval):
-            self.dropTime = pg.time.get_ticks()
-            self.block.drop(self.all_sprites)
-        pg.event.pump()
+    # def events(self):
+    #     pressed = pg.key.get_pressed()
+    #     if (pg.time.get_ticks() > self.lastTime + self.interval) and \
+    #         (pg.time.get_ticks() > self.Time + self.rotate_interval):
+    #         self.lastTime = pg.time.get_ticks()
+    #         self.Time = pg.time.get_ticks()
+    #         if pressed[pg.K_LEFT] and pressed[pg.K_UP]:
+    #             self.block.move_left(self.all_sprites)
+    #             self.block.rotate(self.all_sprites,clockwise=True)
+    #         if pressed[pg.K_RIGHT] and pressed[pg.K_UP]:
+    #             self.block.move_right(self.all_sprites)
+    #             self.block.rotate(self.all_sprites,clockwise=True)
+    #         if pressed[pg.K_LEFT] and pressed[pg.K_z]:
+    #             self.block.move_left(self.all_sprites)
+    #             self.block.rotate(self.all_sprites,clockwise=False)
+    #         if pressed[pg.K_RIGHT] and pressed[pg.K_z]:
+    #             self.block.move_right(self.all_sprites)
+    #             self.block.rotate(self.all_sprites,clockwise=False)
+    #     if pressed[pg.K_ESCAPE]:
+    #         self.running = False 
+    #     if pressed[pg.K_LEFT] and \
+    #         (pg.time.get_ticks() > self.leftTime + self.interval):
+    #         self.leftTime = pg.time.get_ticks()
+    #         self.block.move_left(self.all_sprites)
+    #     if pressed[pg.K_RIGHT] and \
+    #         (pg.time.get_ticks() > self.rightTime + self.interval):
+    #         self.rightTime = pg.time.get_ticks()
+    #         self.block.move_right(self.all_sprites)
+    #     if pressed[pg.K_UP] and \
+    #         (pg.time.get_ticks() > self.cwTime + self.rotate_interval):
+    #         self.cwTime = pg.time.get_ticks()
+    #         self.block.rotate(self.all_sprites,clockwise=True)
+    #     if pressed[pg.K_z] and \
+    #         (pg.time.get_ticks() > self.ccwTime + self.rotate_interval):
+    #         self.ccwTime = pg.time.get_ticks()
+    #         self.block.rotate(self.all_sprites,clockwise=False)
+    #     if pressed[pg.K_SPACE] and \
+    #         (pg.time.get_ticks() > self.dropTime + self.drop_interval):
+    #         self.dropTime = pg.time.get_ticks()
+    #         self.block.drop(self.all_sprites)
+    #     pg.event.pump()
     # if this option is upcommented, remember to uncomment the clock ticks in 
     # block.py Piece Class movement functions, note it has not been added for
     # the rotate function
-    """def events(self):
+    def events(self):
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 self.running = False
@@ -114,16 +115,24 @@ class Tetris:
                     self.up_up = False
                 if event.key == pg.K_z:
                     self.up_z = False
-        if self.left:
-            self.block.move_left(self.all_sprites)
-        if self.right:
-            self.block.move_right(self.all_sprites)
-        if self.down:
-            self.block.drop(self.all_sprites)
-        if self.up_z:
-            self.block.rotate(self.all_sprites,clockwise=False)
-        if self.up_up:
-            self.block.rotate(self.all_sprites,clockwise=True)"""
+        if self.cooldown <= 0:
+            if self.left:
+                self.block.move_left(self.all_sprites)
+                self.cooldown += COOLDOWN_TIME
+            if self.right:
+                self.block.move_right(self.all_sprites)
+                self.cooldown += COOLDOWN_TIME
+            if self.down:
+                self.block.drop(self.all_sprites)
+                self.cooldown += COOLDOWN_TIME
+            if self.up_z:
+                self.block.rotate(self.all_sprites,clockwise=False)
+                self.cooldown += COOLDOWN_TIME
+            if self.up_up:
+                self.block.rotate(self.all_sprites,clockwise=True)
+                self.cooldown += COOLDOWN_TIME
+        else:
+            self.cooldown -= FPS
     def update(self):
         add_block = self.block.update(self.all_sprites)
         self.line_clear()
