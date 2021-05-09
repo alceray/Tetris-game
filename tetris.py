@@ -89,7 +89,7 @@ class Tetris:
                     self.rotate_cd -= 2*FPS
                 else:
                     self.rotate_cd -= FPS
-            elif self.up:
+            if self.up:
                 # rotate without moving left/right
                 if self.key_count == 0 and self.rotate_cd <= 0:
                     self.block.rotate(self.all_sprites,clockwise=True)
