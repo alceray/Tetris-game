@@ -8,7 +8,7 @@ class Tetris:
         pg.init()
         self.screen = pg.display.set_mode(SCREEN_SIZE)
         self.clock = pg.time.Clock()
-        pg.key.set_repeat(KEY_DELAY,KEY_INTERVAL)
+        # pg.key.set_repeat(KEY_DELAY,KEY_INTERVAL)
         self.count = 0
     def draw_grid(self):
         for x in range(0,WIDTH,TILE_SIZE):
@@ -22,10 +22,11 @@ class Tetris:
         self.running = True
         self.left = False
         self.right = False
-        self.up_z = False
-        self.up_up = False
+        self.z = False
+        self.up = False
         self.down = False
         self.cooldown = 0
+        self.rotate_cd = 0
         while self.running:
             self.clock.tick(FPS)
             self.events()
@@ -45,9 +46,9 @@ class Tetris:
                 if event.key == pg.K_SPACE:
                     self.down = True
                 if event.key == pg.K_UP:
-                    self.up_up = True
+                    self.up = True
                 if event.key == pg.K_z:
-                    self.up_z = True
+                    self.z = True
                 if event.key == pg.K_RSHIFT:
                     self.pause()
                 if event.key == pg.K_LSHIFT:
@@ -60,25 +61,49 @@ class Tetris:
                 if event.key == pg.K_SPACE:
                     self.down = False
                 if event.key == pg.K_UP:
-                    self.up_up = False
+                    self.up = False
                 if event.key == pg.K_z:
-                    self.up_z = False
+                    self.z = False
+        self.key_count = 0 
         if self.cooldown < 0:
             if self.left:
                 self.block.move_left(self.all_sprites)
-                self.cooldown += 0.75*COOLDOWN_TIME
+                self.cooldown += COOLDOWN_TIME
+                self.key_count += 1
             if self.right:
                 self.block.move_right(self.all_sprites)
-                self.cooldown += 0.75*COOLDOWN_TIME
+                self.cooldown += COOLDOWN_TIME
+                self.key_count += 1
             if self.down:
                 self.block.drop(self.all_sprites)
-                self.cooldown += 2*COOLDOWN_TIME
-            if self.up_z:
-                self.block.rotate(self.all_sprites,clockwise=False)
-                self.cooldown += 2*COOLDOWN_TIME
-            if self.up_up:
-                self.block.rotate(self.all_sprites,clockwise=True)
-                self.cooldown += 2*COOLDOWN_TIME
+                self.cooldown += 5*COOLDOWN_TIME
+            if self.z:
+                if self.key_count == 0 and self.rotate_cd <= 0:
+                    self.block.rotate(self.all_sprites,clockwise=False)
+                    self.cooldown += 2*COOLDOWN_TIME
+                    self.rotate_cd += 0.8*COOLDOWN_TIME
+                elif self.key_count > 0 and self.rotate_cd <= 0:
+                    self.block.rotate(self.all_sprites,clockwise=False)
+                    self.rotate_cd += 2*COOLDOWN_TIME
+                elif self.key_count > 0:
+                    self.rotate_cd -= 2*FPS
+                else:
+                    self.rotate_cd -= FPS
+            elif self.up:
+                # rotate without moving left/right
+                if self.key_count == 0 and self.rotate_cd <= 0:
+                    self.block.rotate(self.all_sprites,clockwise=True)
+                    self.cooldown += 2*COOLDOWN_TIME
+                    self.rotate_cd += 0.8*COOLDOWN_TIME
+                # rotate while moving left/right
+                elif self.key_count > 0 and self.rotate_cd <= 0:
+                    self.block.rotate(self.all_sprites,clockwise=True)
+                    self.rotate_cd += 2*COOLDOWN_TIME
+                # lower more cd when moving left/right
+                elif self.key_count > 0:
+                    self.rotate_cd -= 2*FPS
+                else:
+                    self.rotate_cd -= FPS
         else:
             self.cooldown -= FPS
     def update(self):
