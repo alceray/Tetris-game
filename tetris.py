@@ -27,9 +27,13 @@ class Tetris:
         self.up_up = False
         self.down = False
         # if only the second option is used delete self.Time to self.rotate_interval
+        self.cwTime = INITIAL_TIME
+        self.ccwTime = INITIAL_TIME
         self.Time = INITIAL_TIME
         self.lastTime = INITIAL_TIME
         self.dropTime = INITIAL_TIME
+        self.leftTime = INITIAL_TIME
+        self.rightTime = INITIAL_TIME
         self.interval = MOVE_TIME
         self.rotate_interval = ROTATE_TIME
         self.drop_interval = DROP_TIME
@@ -56,20 +60,24 @@ class Tetris:
             if pressed[pg.K_RIGHT] and pressed[pg.K_z]:
                 self.block.move_right(self.all_sprites)
                 self.block.rotate(self.all_sprites,clockwise=False)
-        if (pg.time.get_ticks() > self.lastTime + self.interval):
-            self.lastTime = pg.time.get_ticks()
-            if pressed[pg.K_ESCAPE]:
-                self.running = False 
-            if pressed[pg.K_LEFT]:
-                self.block.move_left(self.all_sprites)
-            if pressed[pg.K_RIGHT]:
-                self.block.move_right(self.all_sprites)
-        if (pg.time.get_ticks() > self.Time + self.rotate_interval):
-            self.Time = pg.time.get_ticks()
-            if pressed[pg.K_UP]:
-                self.block.rotate(self.all_sprites,clockwise=True)
-            if pressed[pg.K_z]:
-                self.block.rotate(self.all_sprites,clockwise=False)
+        if pressed[pg.K_ESCAPE]:
+            self.running = False 
+        if pressed[pg.K_LEFT] and \
+            (pg.time.get_ticks() > self.leftTime + self.interval):
+            self.leftTime = pg.time.get_ticks()
+            self.block.move_left(self.all_sprites)
+        if pressed[pg.K_RIGHT] and \
+            (pg.time.get_ticks() > self.rightTime + self.interval):
+            self.rightTime = pg.time.get_ticks()
+            self.block.move_right(self.all_sprites)
+        if pressed[pg.K_UP] and \
+            (pg.time.get_ticks() > self.cwTime + self.rotate_interval):
+            self.cwTime = pg.time.get_ticks()
+            self.block.rotate(self.all_sprites,clockwise=True)
+        if pressed[pg.K_z] and \
+            (pg.time.get_ticks() > self.ccwTime + self.rotate_interval):
+            self.ccwTime = pg.time.get_ticks()
+            self.block.rotate(self.all_sprites,clockwise=False)
         if pressed[pg.K_SPACE] and \
             (pg.time.get_ticks() > self.dropTime + self.drop_interval):
             self.dropTime = pg.time.get_ticks()
