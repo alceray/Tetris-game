@@ -18,75 +18,19 @@ class Tetris:
     def run(self):
         self.all_sprites = pg.sprite.Group()
         self.type = random.choice(list(GAME_PIECES.keys()))
-        self.block = Piece(self.count, self.type)
+        self.block = BlockTypes(self.count, self.type)
         self.running = True
-        # if only the first option is used delete self.left to self.down
         self.left = False
         self.right = False
         self.up_z = False
         self.up_up = False
         self.down = False
         self.cooldown = 0
-        # if only the second option is used delete self.Time to self.rotate_interval
-        # self.cwTime = INITIAL_TIME
-        # self.ccwTime = INITIAL_TIME
-        # self.Time = INITIAL_TIME
-        # self.lastTime = INITIAL_TIME
-        # self.dropTime = INITIAL_TIME
-        # self.leftTime = INITIAL_TIME
-        # self.rightTime = INITIAL_TIME
-        # self.interval = MOVE_TIME
-        # self.rotate_interval = ROTATE_TIME
-        # self.drop_interval = DROP_TIME
         while self.running:
             self.clock.tick(FPS)
             self.events()
             self.update()
             self.draw()
-    # def events(self):
-    #     pressed = pg.key.get_pressed()
-    #     if (pg.time.get_ticks() > self.lastTime + self.interval) and \
-    #         (pg.time.get_ticks() > self.Time + self.rotate_interval):
-    #         self.lastTime = pg.time.get_ticks()
-    #         self.Time = pg.time.get_ticks()
-    #         if pressed[pg.K_LEFT] and pressed[pg.K_UP]:
-    #             self.block.move_left(self.all_sprites)
-    #             self.block.rotate(self.all_sprites,clockwise=True)
-    #         if pressed[pg.K_RIGHT] and pressed[pg.K_UP]:
-    #             self.block.move_right(self.all_sprites)
-    #             self.block.rotate(self.all_sprites,clockwise=True)
-    #         if pressed[pg.K_LEFT] and pressed[pg.K_z]:
-    #             self.block.move_left(self.all_sprites)
-    #             self.block.rotate(self.all_sprites,clockwise=False)
-    #         if pressed[pg.K_RIGHT] and pressed[pg.K_z]:
-    #             self.block.move_right(self.all_sprites)
-    #             self.block.rotate(self.all_sprites,clockwise=False)
-    #     if pressed[pg.K_ESCAPE]:
-    #         self.running = False 
-    #     if pressed[pg.K_LEFT] and \
-    #         (pg.time.get_ticks() > self.leftTime + self.interval):
-    #         self.leftTime = pg.time.get_ticks()
-    #         self.block.move_left(self.all_sprites)
-    #     if pressed[pg.K_RIGHT] and \
-    #         (pg.time.get_ticks() > self.rightTime + self.interval):
-    #         self.rightTime = pg.time.get_ticks()
-    #         self.block.move_right(self.all_sprites)
-    #     if pressed[pg.K_UP] and \
-    #         (pg.time.get_ticks() > self.cwTime + self.rotate_interval):
-    #         self.cwTime = pg.time.get_ticks()
-    #         self.block.rotate(self.all_sprites,clockwise=True)
-    #     if pressed[pg.K_z] and \
-    #         (pg.time.get_ticks() > self.ccwTime + self.rotate_interval):
-    #         self.ccwTime = pg.time.get_ticks()
-    #         self.block.rotate(self.all_sprites,clockwise=False)
-    #     if pressed[pg.K_SPACE] and \
-    #         (pg.time.get_ticks() > self.dropTime + self.drop_interval):
-    #         self.dropTime = pg.time.get_ticks()
-    #         self.block.drop(self.all_sprites)
-    #     pg.event.pump()
-    # if this option is upcommented, remember to uncomment the clock ticks in 
-    # block.py Piece Class movement functions, note it has not been added for
-    # the rotate function
     def events(self):
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -115,22 +59,22 @@ class Tetris:
                     self.up_up = False
                 if event.key == pg.K_z:
                     self.up_z = False
-        if self.cooldown <= 0:
+        if self.cooldown < 0:
             if self.left:
                 self.block.move_left(self.all_sprites)
-                self.cooldown += COOLDOWN_TIME
+                self.cooldown += 0.75*COOLDOWN_TIME
             if self.right:
                 self.block.move_right(self.all_sprites)
-                self.cooldown += COOLDOWN_TIME
+                self.cooldown += 0.75*COOLDOWN_TIME
             if self.down:
                 self.block.drop(self.all_sprites)
-                self.cooldown += COOLDOWN_TIME
+                self.cooldown += 2*COOLDOWN_TIME
             if self.up_z:
                 self.block.rotate(self.all_sprites,clockwise=False)
-                self.cooldown += COOLDOWN_TIME
+                self.cooldown += 2*COOLDOWN_TIME
             if self.up_up:
                 self.block.rotate(self.all_sprites,clockwise=True)
-                self.cooldown += COOLDOWN_TIME
+                self.cooldown += 2*COOLDOWN_TIME
         else:
             self.cooldown -= FPS
     def update(self):
@@ -142,7 +86,7 @@ class Tetris:
             self.reach_top()
             self.count += 1
             self.type = random.choice(list(GAME_PIECES.keys()))
-            self.block = Piece(self.count, self.type)
+            self.block = BlockTypes(self.count, self.type)
     def draw(self):
         self.screen.fill(BG_COLOUR)
         self.draw_grid()
@@ -151,7 +95,7 @@ class Tetris:
         self.draw_block()
         pg.display.update()
     def draw_block(self):
-        for i in range(self.block.len):
+        for i in range(self.block.size):
             self.screen.blit(self.block.piece[i].surf,self.block.piece[i].rect)
     def check_line_clear(self):
         self.lines = [0] * GRID_HEIGHT

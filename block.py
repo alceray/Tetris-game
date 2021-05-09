@@ -9,24 +9,25 @@ class Block(pg.sprite.Sprite):
         self.rect = self.surf.get_rect(center=(x,y))
 
 class BlockTypes:
-    def __init__(self,x,y,len,pos,coord,col,count):
-        self.x = x
-        self.y = y
-        self.len = len
-        self.pos = pos
-        self.coord = coord
-        self.col = col
+    def __init__(self,count,block_type):
+        length = GAME_PIECES[block_type]["Length"]
+        self.x = (random.randint(0,GRID_WIDTH-length)+0.5)*TILE_SIZE
+        self.y = -TILE_SIZE/2
+        self.size = GAME_PIECES[block_type]["Size"]
+        self.pos = 0
+        self.coord = GAME_PIECES[block_type]["Coord"]
+        self.col = GAME_PIECES[block_type]["Col"]
         self.piece = self.create_blocks()
         self.speed = B_START_SPEED + (count//B_SPEED_INCREMENT) * B_SPEED_UP
     def create_blocks(self):
         blocks = list()
-        for i in range(self.len):
+        for i in range(self.size):
             blocks.append(Block(self.x+self.coord[self.pos][i][0]*TILE_SIZE, \
                 self.y-self.coord[self.pos][i][1]*TILE_SIZE))
             blocks[i].surf.fill(self.col)
         return blocks
     def adjust_blocks(self):
-        for i in range(self.len):
+        for i in range(self.size):
             self.piece[i].rect.center = (self.x+self.coord[self.pos][i][0]*TILE_SIZE, \
                 self.y-self.coord[self.pos][i][1]*TILE_SIZE)
     def colliding(self,b,group):
@@ -47,58 +48,58 @@ class BlockTypes:
             ls[col] = min(ls[col],block.rect.top)
         return ls
     def update(self,group):
-        for i in range(self.len):
+        for i in range(self.size):
             self.piece[i].rect.move_ip(0,self.speed)
-        for i in range(self.len):
+        for i in range(self.size):
             if self.piece[i].rect.bottom > HEIGHT:
                 diff = self.piece[i].rect.bottom - HEIGHT 
-                for j in range(self.len):
+                for j in range(self.size):
                     self.piece[j].rect.move_ip(0,-diff)
                 return True
         landscape = self.get_landscape(group)
-        for i in range(self.len):
+        for i in range(self.size):
             for j in range(GRID_WIDTH):
                 if self.piece[i].rect.x == j * TILE_SIZE and \
                     self.piece[i].rect.bottom > landscape[j]:
                     diff = self.piece[i].rect.bottom - landscape[j]
-                    for k in range(self.len):
+                    for k in range(self.size):
                         self.piece[k].rect.move_ip(0,-diff)
                     return True
         return False
     def move_left(self,group):
         moved = list()
-        for i in range(self.len):
+        for i in range(self.size):
             self.piece[i].rect.move_ip(-TILE_SIZE,0)
             moved.append(not self.colliding(self.piece[i],group))
         if not all(moved):
-            for i in range(self.len):
+            for i in range(self.size):
                 self.piece[i].rect.move_ip(TILE_SIZE,0)
     def move_right(self,group):
         moved = list()
-        for i in range(self.len):
+        for i in range(self.size):
             self.piece[i].rect.move_ip(TILE_SIZE,0)
             moved.append(not self.colliding(self.piece[i],group))
         if not all(moved):
-            for i in range(self.len):
+            for i in range(self.size):
                 self.piece[i].rect.move_ip(-TILE_SIZE,0)
     def drop(self,group):
         landscape = self.get_landscape(group)
         min_dist = HEIGHT
-        for i in range(self.len):
+        for i in range(self.size):
             for j in range(GRID_WIDTH):
                 if self.piece[i].rect.x == j * TILE_SIZE:
                     min_dist = min(min_dist,landscape[j]-self.piece[i].rect.bottom)
-        for i in range(self.len):
+        for i in range(self.size):
             self.piece[i].rect.bottom += min_dist
     def rotate(self,group,clockwise):
-        for i in range(self.len):
+        for i in range(self.size):
             if self.pos == i:
                 x = self.piece[i].rect.centerx-self.coord[i][i][0]*TILE_SIZE
                 y = self.piece[i].rect.centery+self.coord[i][i][1]*TILE_SIZE
                 if clockwise:
-                    new_pos = (i+1)%self.len
+                    new_pos = (i+1)%self.size
                 else:
-                    new_pos = (i-1)%self.len
+                    new_pos = (i-1)%self.size
                 new_coord = list(set(self.coord[new_pos]).difference(self.coord[i]))
                 for new_x,new_y in new_coord:
                     if self.colliding(Block(x+new_x*TILE_SIZE,y-new_y*TILE_SIZE),group):
@@ -108,28 +109,4 @@ class BlockTypes:
                 self.pos = new_pos
                 self.adjust_blocks()
                 return
-
-class Piece(BlockTypes):
-    def __init__(self,count,block_type):
-        len = GAME_PIECES[block_type]["Length"]
-        x = (random.randint(0,GRID_WIDTH-len)+0.5)*TILE_SIZE
-        coord = GAME_PIECES[block_type]["Coord"]
-        col = GAME_PIECES[block_type]["Col"]
-        super().__init__(x,0,4,0,coord,col,count)        
-    def update(self,group):
-        return super().update(group)
-    def move_left(self,group):
-        #clock = pg.time.Clock()
-        super().move_left(group)
-        #clock.tick(14)
-    def move_right(self,group):
-        #clock = pg.time.Clock()
-        super().move_right(group)
-        #clock.tick(14)
-    def drop(self,group):
-        #clock = pg.time.Clock()
-        super().drop(group)
-        #clock.tick(7)
-    def rotate(self,group,clockwise):
-        super().rotate(group, clockwise)
-    
+            
