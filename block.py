@@ -63,7 +63,7 @@ class BlockTypes:
         return False
     def move_down(self,speed):
         for block in self.piece:
-            block.rect.move_ip(0,self.speed)
+            block.rect.move_ip(0,speed)
     def move_left(self,group):
         moved = list()
         for block in self.piece:

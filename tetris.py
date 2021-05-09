@@ -19,6 +19,7 @@ class Tetris:
         self.all_sprites = pg.sprite.Group()
         self.type = random.choice(list(GAME_PIECES.keys()))
         self.block = BlockTypes(self.count, self.type)
+        self.add_block = False
         self.running = True
         self.left = False
         self.right = False
@@ -111,14 +112,15 @@ class Tetris:
                 else:
                     self.rotate_cd -= FPS
             if self.down:
-                self.block.soft_drop(self.all_sprites,10*self.block.speed)
-                self.cooldown += COOLDOWN_TIME
+                self.block.soft_drop(self.all_sprites,SOFT_DROP_SPEED)
+                if self.add_block:
+                    self.cooldown += 5*COOLDOWN_TIME
         else:
             self.cooldown -= FPS
     def update(self):
-        add_block = self.block.update(self.all_sprites,self.block.speed)
+        self.add_block = self.block.update(self.all_sprites,self.block.speed)
         self.line_clear()
-        if add_block:
+        if self.add_block:
             for block in self.block.piece:
                 self.all_sprites.add(block)
             self.reach_top()
