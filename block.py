@@ -45,8 +45,8 @@ class BlockTypes:
             col = block.rect.left//TILE_SIZE
             ls[col] = min(ls[col],block.rect.top)
         return ls
-    def update(self,group):
-        self.move_down()
+    def update(self,group,speed):
+        self.move_down(speed)
         for block in self.piece:
             if block.rect.bottom > HEIGHT:
                 diff = block.rect.bottom - HEIGHT 
@@ -61,7 +61,7 @@ class BlockTypes:
                         b.rect.move_ip(0,-diff)
                     return True
         return False
-    def move_down(self):
+    def move_down(self,speed):
         for block in self.piece:
             block.rect.move_ip(0,self.speed)
     def move_left(self,group):
@@ -107,4 +107,6 @@ class BlockTypes:
                 self.pos = new_pos
                 self.adjust_blocks()
                 return
+    def soft_drop(self,group,speed):
+        self.update(group,speed)
             
