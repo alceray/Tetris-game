@@ -115,7 +115,7 @@ class Piece(BlockTypes):
         x = (random.randint(0,GRID_WIDTH-len)+0.5)*TILE_SIZE
         coord = GAME_PIECES[block_type]["Coord"]
         col = GAME_PIECES[block_type]["Col"]
-        super().__init__(x,-TILE_SIZE/2,4,0,coord,col,count)        
+        super().__init__(x,0,4,0,coord,col,count)        
     def update(self,group):
         return super().update(group)
     def move_left(self,group):
