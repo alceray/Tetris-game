@@ -9,13 +9,13 @@ class Tetris:
         self.screen = pg.display.set_mode(SCREEN_SIZE)
         self.clock = pg.time.Clock()
         # pg.key.set_repeat(KEY_DELAY,KEY_INTERVAL)
-        self.count = 0
     def draw_grid(self):
         for x in range(0,WIDTH,TILE_SIZE):
             pg.draw.line(self.screen,DARK_GREY,(x,0),(x,HEIGHT))
         for y in range(0,HEIGHT,TILE_SIZE):
             pg.draw.line(self.screen,DARK_GREY,(0,y),(WIDTH,y))
     def run(self):
+        self.count = 0
         self.all_sprites = pg.sprite.Group()
         self.type = random.choice(list(GAME_PIECES.keys()))
         self.block = BlockTypes(self.count, self.type)
@@ -89,7 +89,7 @@ class Tetris:
                     self.rotate_cd -= 2*FPS
                 else:
                     self.rotate_cd -= FPS
-            elif self.up:
+            if self.up:
                 # rotate without moving left/right
                 if self.key_count == 0 and self.rotate_cd <= 0:
                     self.block.rotate(self.all_sprites,clockwise=True)
@@ -152,22 +152,22 @@ class Tetris:
                 self.running = False
                 break
     def pause(self):
-        loop = True
+        paused = True
         self.screen.fill(BLACK)
         self.font = pg.font.SysFont("Times New Roman",FONT_SIZE)
         self.text = self.font.render("Press Shift to continue",True,WHITE)
         self.screen.blit(self.text,(25,(HEIGHT-FONT_SIZE)/2))
-        while loop:
+        while paused:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
-                    loop = False
+                    paused = False
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_RSHIFT:
-                        loop = False
+                        paused = False
                     elif event.key == pg.K_LSHIFT:
-                        loop = False
+                        paused = False
                     elif event.key == pg.K_ESCAPE:
-                        loop = False
+                        paused = False
             pg.display.update()
 
 t = Tetris()

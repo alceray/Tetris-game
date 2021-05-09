@@ -31,8 +31,6 @@ class BlockTypes:
             self.piece[i].rect.center = (self.x+self.coord[self.pos][i][0]*TILE_SIZE, \
                 self.y-self.coord[self.pos][i][1]*TILE_SIZE)
     def colliding(self,b,group):
-        if b.rect.bottom > HEIGHT:
-            return True
         if b.rect.left < 0:
             return True
         if b.rect.right > WIDTH:
@@ -48,49 +46,49 @@ class BlockTypes:
             ls[col] = min(ls[col],block.rect.top)
         return ls
     def update(self,group):
-        for i in range(self.size):
-            self.piece[i].rect.move_ip(0,self.speed)
-        for i in range(self.size):
-            if self.piece[i].rect.bottom > HEIGHT:
-                diff = self.piece[i].rect.bottom - HEIGHT 
-                for j in range(self.size):
-                    self.piece[j].rect.move_ip(0,-diff)
+        self.move_down()
+        for block in self.piece:
+            if block.rect.bottom > HEIGHT:
+                diff = block.rect.bottom - HEIGHT 
+                for b in self.piece:
+                    b.rect.move_ip(0,-diff)
                 return True
-        landscape = self.get_landscape(group)
-        for i in range(self.size):
-            for j in range(GRID_WIDTH):
-                if self.piece[i].rect.x == j * TILE_SIZE and \
-                    self.piece[i].rect.bottom > landscape[j]:
-                    diff = self.piece[i].rect.bottom - landscape[j]
-                    for k in range(self.size):
-                        self.piece[k].rect.move_ip(0,-diff)
+        for block in self.piece:
+            for sprite in group:
+                if pg.sprite.collide_rect(block,sprite):
+                    diff = block.rect.bottom - sprite.rect.top
+                    for b in self.piece:
+                        b.rect.move_ip(0,-diff)
                     return True
         return False
+    def move_down(self):
+        for block in self.piece:
+            block.rect.move_ip(0,self.speed)
     def move_left(self,group):
         moved = list()
-        for i in range(self.size):
-            self.piece[i].rect.move_ip(-TILE_SIZE,0)
-            moved.append(not self.colliding(self.piece[i],group))
+        for block in self.piece:
+            block.rect.move_ip(-TILE_SIZE,0)
+            moved.append(not self.colliding(block,group))
         if not all(moved):
-            for i in range(self.size):
-                self.piece[i].rect.move_ip(TILE_SIZE,0)
+            for block in self.piece:
+                block.rect.move_ip(TILE_SIZE,0)
     def move_right(self,group):
         moved = list()
-        for i in range(self.size):
-            self.piece[i].rect.move_ip(TILE_SIZE,0)
-            moved.append(not self.colliding(self.piece[i],group))
+        for block in self.piece:
+            block.rect.move_ip(TILE_SIZE,0)
+            moved.append(not self.colliding(block,group))
         if not all(moved):
-            for i in range(self.size):
-                self.piece[i].rect.move_ip(-TILE_SIZE,0)
+            for block in self.piece:
+                block.rect.move_ip(-TILE_SIZE,0)
     def drop(self,group):
         landscape = self.get_landscape(group)
         min_dist = HEIGHT
-        for i in range(self.size):
+        for block in self.piece:
             for j in range(GRID_WIDTH):
-                if self.piece[i].rect.x == j * TILE_SIZE:
-                    min_dist = min(min_dist,landscape[j]-self.piece[i].rect.bottom)
-        for i in range(self.size):
-            self.piece[i].rect.bottom += min_dist
+                if block.rect.x == j * TILE_SIZE:
+                    min_dist = min(min_dist,landscape[j]-block.rect.bottom)
+        for block in self.piece:
+            block.rect.bottom += min_dist
     def rotate(self,group,clockwise):
         for i in range(self.size):
             if self.pos == i:
