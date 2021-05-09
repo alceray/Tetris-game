@@ -44,38 +44,22 @@ class Tetris:
             self.draw()
     def events(self):
         pressed = pg.key.get_pressed()
-        if pressed[pg.K_LEFT] and \
-        (pg.time.get_ticks() > self.leftTime + self.interval) and \
-            pressed[pg.K_UP] and \
-                (pg.time.get_ticks() > self.cwTime + self.rotate_interval):
-            self.leftTime = pg.time.get_ticks()
-            self.cwTime = pg.time.get_ticks()
-            self.block.move_left(self.all_sprites)
-            self.block.rotate(self.all_sprites,clockwise=True)
-        if pressed[pg.K_RIGHT] and \
-            (pg.time.get_ticks() > self.rightTime + self.interval) and \
-                pressed[pg.K_UP] and \
-                    (pg.time.get_ticks() > self.cwTime + self.rotate_interval):
-            self.rightTime = pg.time.get_ticks()
-            self.cwTime = pg.time.get_ticks()
-            self.block.move_right(self.all_sprites)
-            self.block.rotate(self.all_sprites,clockwise=True)
-        if pressed[pg.K_LEFT] and \
-            (pg.time.get_ticks() > self.leftTime + self.interval) and \
-                pressed[pg.K_UP] and \
-                    (pg.time.get_ticks() > self.ccwTime + self.rotate_interval):
-            self.leftTime = pg.time.get_ticks()
-            self.ccwTime = pg.time.get_ticks()
-            self.block.move_left(self.all_sprites)
-            self.block.rotate(self.all_sprites,clockwise=False)
-        if pressed[pg.K_RIGHT] and \
-            (pg.time.get_ticks() > self.rightTime + self.interval) and \
-                pressed[pg.K_UP] and \
-                    (pg.time.get_ticks() > self.ccwTime + self.rotate_interval):
-            self.rightTime = pg.time.get_ticks()
-            self.ccwTime = pg.time.get_ticks()
-            self.block.move_right(self.all_sprites)
-            self.block.rotate(self.all_sprites,clockwise=False)
+        if (pg.time.get_ticks() > self.lastTime + self.interval) and \
+            (pg.time.get_ticks() > self.Time + self.rotate_interval):
+            self.lastTime = pg.time.get_ticks()
+            self.Time = pg.time.get_ticks()
+            if pressed[pg.K_LEFT] and pressed[pg.K_UP]:
+                self.block.move_left(self.all_sprites)
+                self.block.rotate(self.all_sprites,clockwise=True)
+            if pressed[pg.K_RIGHT] and pressed[pg.K_UP]:
+                self.block.move_right(self.all_sprites)
+                self.block.rotate(self.all_sprites,clockwise=True)
+            if pressed[pg.K_LEFT] and pressed[pg.K_z]:
+                self.block.move_left(self.all_sprites)
+                self.block.rotate(self.all_sprites,clockwise=False)
+            if pressed[pg.K_RIGHT] and pressed[pg.K_z]:
+                self.block.move_right(self.all_sprites)
+                self.block.rotate(self.all_sprites,clockwise=False)
         if pressed[pg.K_ESCAPE]:
             self.running = False 
         if pressed[pg.K_LEFT] and \
