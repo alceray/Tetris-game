@@ -48,6 +48,10 @@ class Tetris:
                     self.up_up = True
                 if event.key == pg.K_z:
                     self.up_z = True
+                if event.key == pg.K_RSHIFT:
+                    self.pause()
+                if event.key == pg.K_LSHIFT:
+                    self.pause()
             elif event.type == pg.KEYUP:
                 if event.key == pg.K_LEFT:
                     self.left = False
@@ -122,6 +126,24 @@ class Tetris:
             if sprite.rect.top == 0:
                 self.running = False
                 break
+    def pause(self):
+        loop = True
+        self.screen.fill(BLACK)
+        self.font = pg.font.SysFont("Times New Roman",FONT_SIZE)
+        self.text = self.font.render("Press Shift to continue",True,WHITE)
+        self.screen.blit(self.text,(25,(HEIGHT-FONT_SIZE)/2))
+        while loop:
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    loop = False
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_RSHIFT:
+                        loop = False
+                    elif event.key == pg.K_LSHIFT:
+                        loop = False
+                    elif event.key == pg.K_ESCAPE:
+                        loop = False
+            pg.display.update()
 
 t = Tetris()
 t.run()
