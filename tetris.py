@@ -35,7 +35,7 @@ class Tetris:
         self.leftTime = INITIAL_TIME
         self.rightTime = INITIAL_TIME
         self.interval = MOVE_TIME
-        self.rotate_interval = ROTATE_TIME
+        self.rotate_interval = GAME_PIECES[self.type]["Rotate_time"]
         self.drop_interval = DROP_TIME
         while self.running:
             self.clock.tick(FPS)
