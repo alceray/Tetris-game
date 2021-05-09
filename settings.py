@@ -12,12 +12,12 @@ ORANGE = (255,127,0)
 # game settings
 FPS = 60
 INITIAL_TIME = 0
-MOVE_TIME = 90
-ROTATE_TIME = 200
+MOVE_TIME = 75
+ROTATE_TIME = 400
 DROP_TIME = 100
 B_START_SPEED = 2
-B_SPEED_UP = 0.2
-B_SPEED_INCREMENT = 20
+B_SPEED_UP = 0.1
+B_SPEED_INCREMENT = 15
 KEY_DELAY = 200
 KEY_INTERVAL = 100
 TILE_SIZE = 32
@@ -47,7 +47,7 @@ GAME_PIECES = {
                             ((0,0),(1,0),(0,1),(1,1)),\
                                 ((0,0),(1,0),(0,1),(1,1)))
     }, 
-    "RBlock": {
+    "JBlock": {
         "Col" : BLUE, 
         "Length" : 3,
         "Coord" : (((0,2),(0,1),(1,1),(2,1)),\
