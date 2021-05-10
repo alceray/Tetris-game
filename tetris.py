@@ -131,12 +131,28 @@ class Tetris:
         self.screen.fill(BG_COLOUR)
         for sprite in self.all_sprites:
             self.screen.blit(sprite.surf,sprite.rect)
+        self.draw_block_shadow()
         self.draw_grid()
         self.draw_block()
         pg.display.update()
     def draw_block(self):
         for block in self.block.piece:
             self.screen.blit(block.surf,block.rect)
+    def draw_block_shadow(self):
+        min_dist = 2*HEIGHT
+        for block in self.block.piece:
+            min_dist = min(HEIGHT-block.rect.bottom,min_dist)
+            for sprite in self.all_sprites:
+                diff = sprite.rect.top - block.rect.bottom
+                if block.rect.x == sprite.rect.x and diff > 0:
+                    min_dist = min(min_dist,diff)
+        for block in self.block.piece:
+            shadow = pg.Surface((TILE_SIZE,TILE_SIZE))
+            shadow_rect = shadow.get_rect(\
+                center=(block.rect.centerx,block.rect.centery+min_dist))
+            shadow.set_alpha(127)
+            shadow.fill(self.block.col)
+            self.screen.blit(shadow,shadow_rect)
     def check_line_clear(self):
         self.lines = [0] * GRID_HEIGHT
         for sprite in self.all_sprites:
@@ -165,9 +181,9 @@ class Tetris:
     def pause(self):
         paused = True
         self.screen.fill(BLACK)
-        self.font = pg.font.SysFont("Times New Roman",FONT_SIZE)
-        self.text = self.font.render("Press Shift to continue",True,WHITE)
-        self.screen.blit(self.text,(25,(HEIGHT-FONT_SIZE)/2))
+        font = pg.font.SysFont("Times New Roman",FONT_SIZE)
+        text = font.render("Press Shift to continue",True,WHITE)
+        self.screen.blit(text,(25,(HEIGHT-FONT_SIZE)/2))
         while paused:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
