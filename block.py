@@ -11,7 +11,7 @@ class Block(pg.sprite.Sprite):
 class BlockTypes:
     def __init__(self,count,block_type):
         length = GAME_PIECES[block_type]["Length"]
-        self.x = (random.randint(INFO_WIDTH,GRID_WIDTH-length)+0.5)*TILE_SIZE
+        self.x = (random.randint(INFO_WIDTH,TOTAL_WIDTH-length)+0.5)*TILE_SIZE
         self.y = 0
         self.size = GAME_PIECES[block_type]["Size"]
         self.pos = 0
