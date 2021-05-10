@@ -10,12 +10,13 @@ class Tetris:
         self.clock = pg.time.Clock()
         # pg.key.set_repeat(KEY_DELAY,KEY_INTERVAL)
     def draw_grid(self):
-        for x in range(0,WIDTH,TILE_SIZE):
+        for x in range(SIDE_WIDTH,WIDTH,TILE_SIZE):
             pg.draw.line(self.screen,DARK_GREY,(x,0),(x,HEIGHT))
         for y in range(0,HEIGHT,TILE_SIZE):
-            pg.draw.line(self.screen,DARK_GREY,(0,y),(WIDTH,y))
+            pg.draw.line(self.screen,DARK_GREY,(SIDE_WIDTH,y),(WIDTH,y))
     def run(self):
         self.count = 0
+        self.score = 0
         self.all_sprites = pg.sprite.Group()
         self.type = random.choice(list(GAME_PIECES.keys()))
         self.block = BlockTypes(self.count, self.type)
@@ -129,6 +130,7 @@ class Tetris:
             self.block = BlockTypes(self.count, self.type)
     def draw(self):
         self.screen.fill(BG_COLOUR)
+        self.update_score(self.screen, self.score)
         for sprite in self.all_sprites:
             self.screen.blit(sprite.surf,sprite.rect)
         self.draw_block_shadow()
@@ -166,6 +168,7 @@ class Tetris:
             for row,num in enumerate(self.lines):
                 if num == GRID_WIDTH:
                     self.remove_row(row)
+                    self.score += 1
     def remove_row(self,row):
         for sprite in self.all_sprites:
             cur_row = sprite.rect.top//TILE_SIZE
@@ -183,7 +186,7 @@ class Tetris:
         self.screen.fill(BLACK)
         font = pg.font.SysFont("Times New Roman",FONT_SIZE)
         text = font.render("Press Shift to continue",True,WHITE)
-        self.screen.blit(text,(25,(HEIGHT-FONT_SIZE)/2))
+        self.screen.blit(text,(100,(HEIGHT-FONT_SIZE)/2))
         while paused:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
@@ -196,6 +199,17 @@ class Tetris:
                     elif event.key == pg.K_ESCAPE:
                         paused = False
             pg.display.update()
+    def update_score(self, screen, score):
+        #print("here")
+        font = pg.font.SysFont("Times New Roman",FONT_SIZE)
+        text = font.render("Score:",True,WHITE)
+        textRect = text.get_rect()
+        textRect.center = (2.5 * TILE_SIZE, 4 * TILE_SIZE)
+        screen.blit(text,textRect)
+        val = font.render(str(score),True,WHITE)
+        valRect = val.get_rect()
+        valRect.center = (2.5 * TILE_SIZE, 5.1 * TILE_SIZE)
+        screen.blit(val,valRect)
 
 t = Tetris()
 t.run()

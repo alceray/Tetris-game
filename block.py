@@ -11,7 +11,7 @@ class Block(pg.sprite.Sprite):
 class BlockTypes:
     def __init__(self,count,block_type):
         length = GAME_PIECES[block_type]["Length"]
-        self.x = (random.randint(0,GRID_WIDTH-length)+0.5)*TILE_SIZE
+        self.x = (random.randint(INFO_WIDTH,GRID_WIDTH-length)+0.5)*TILE_SIZE
         self.y = -TILE_SIZE/2
         self.size = GAME_PIECES[block_type]["Size"]
         self.pos = 0
@@ -31,7 +31,7 @@ class BlockTypes:
             self.piece[i].rect.center = (self.x+self.coord[self.pos][i][0]*TILE_SIZE, \
                 self.y-self.coord[self.pos][i][1]*TILE_SIZE)
     def colliding(self,b,group):
-        if b.rect.left < 0:
+        if b.rect.left < SIDE_WIDTH:
             return True
         if b.rect.right > WIDTH:
             return True
@@ -39,12 +39,6 @@ class BlockTypes:
             if pg.sprite.collide_rect(b,block):
                 return True
         return False
-    def get_landscape(self,group):
-        ls = [HEIGHT] * GRID_WIDTH
-        for block in group:
-            col = block.rect.left//TILE_SIZE
-            ls[col] = min(ls[col],block.rect.top)
-        return ls
     def update(self,group,speed):
         self.move_down(speed)
         for block in self.piece:
@@ -81,12 +75,14 @@ class BlockTypes:
             for block in self.piece:
                 block.rect.move_ip(-TILE_SIZE,0)
     def drop(self,group):
-        landscape = self.get_landscape(group)
         min_dist = HEIGHT
         for block in self.piece:
-            for j in range(GRID_WIDTH):
-                if block.rect.x == j * TILE_SIZE:
-                    min_dist = min(min_dist,landscape[j]-block.rect.bottom)
+            min_dist = min(HEIGHT - block.rect.bottom, min_dist)
+            for sprite in group:
+                if block.rect.x == sprite.rect.x and \
+                    block.rect.bottom < sprite.rect.top:
+                    new_dist = sprite.rect.top - block.rect.bottom
+                    min_dist = min(min_dist,new_dist)
         for block in self.piece:
             block.rect.bottom += min_dist
     def rotate(self,group,clockwise):
