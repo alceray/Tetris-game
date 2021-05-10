@@ -39,12 +39,6 @@ class BlockTypes:
             if pg.sprite.collide_rect(b,block):
                 return True
         return False
-    def get_landscape(self,group):
-        ls = [HEIGHT] * GRID_WIDTH
-        for block in group:
-            col = block.rect.left//TILE_SIZE
-            ls[col] = min(ls[col],block.rect.top)
-        return ls
     def update(self,group,speed):
         self.move_down(speed)
         for block in self.piece:
@@ -81,12 +75,14 @@ class BlockTypes:
             for block in self.piece:
                 block.rect.move_ip(-TILE_SIZE,0)
     def drop(self,group):
-        landscape = self.get_landscape(group)
         min_dist = HEIGHT
         for block in self.piece:
-            for j in range(GRID_WIDTH):
-                if block.rect.x == j * TILE_SIZE:
-                    min_dist = min(min_dist,landscape[j]-block.rect.bottom)
+            min_dist = min(HEIGHT - block.rect.bottom, min_dist)
+            for sprite in group:
+                if block.rect.x == sprite.rect.x and \
+                    block.rect.bottom < sprite.rect.top:
+                    new_dist = sprite.rect.top - block.rect.bottom
+                    min_dist = min(min_dist,new_dist)
         for block in self.piece:
             block.rect.bottom += min_dist
     def rotate(self,group,clockwise):
