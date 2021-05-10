@@ -20,6 +20,7 @@ class Tetris:
         self.all_sprites = pg.sprite.Group()
         self.type = random.choice(list(GAME_PIECES.keys()))
         self.block = BlockTypes(self.count, self.type)
+        self.hard_drop = False
         self.add_block = False
         self.running = True
         self.left = False
@@ -30,6 +31,7 @@ class Tetris:
         self.down = False
         self.cooldown = 0
         self.rotate_cd = 0
+        self.add_block_cd = 10*COOLDOWN_TIME
         while self.running:
             self.clock.tick(FPS)
             self.draw_grid()
@@ -85,6 +87,7 @@ class Tetris:
             if self.drop:
                 self.block.drop(self.all_sprites)
                 self.cooldown += 5*COOLDOWN_TIME
+                self.hard_drop = True
             if self.z:
                 if self.key_count == 0 and self.rotate_cd <= 0:
                     self.block.rotate(self.all_sprites,clockwise=False)
@@ -118,22 +121,33 @@ class Tetris:
                     self.cooldown += 5*COOLDOWN_TIME
         else:
             self.cooldown -= FPS
+    def holding_key(self):
+        return self.left or self.right or self.up or self.z or self.down
     def update(self):
         self.add_block = self.block.update(self.all_sprites,self.block.speed)
         self.line_clear()
-        if self.add_block:
+        print(self.add_block_cd)
+        if self.hard_drop or (self.add_block and self.add_block_cd < 0 and self.holding_key())\
+            or (self.add_block and self.add_block_cd == 0):
             for block in self.block.piece:
                 self.all_sprites.add(block)
             self.reach_top()
             self.count += 1
             self.type = random.choice(list(GAME_PIECES.keys()))
             self.block = BlockTypes(self.count, self.type)
+            self.hard_drop = False
+            self.add_block_cd = 10*COOLDOWN_TIME
+        elif self.add_block and self.add_block_cd < 0:
+            self.add_block_cd += 10
+        elif self.add_block and self.add_block_cd > 0:
+            self.add_block_cd -= FPS
     def draw(self):
         self.screen.fill(BG_COLOUR)
         self.update_score(self.screen, self.score)
         for sprite in self.all_sprites:
             self.screen.blit(sprite.surf,sprite.rect)
-        self.draw_block_shadow()
+        if not self.add_block:
+            self.draw_block_shadow()
         self.draw_grid()
         self.draw_block()
         pg.display.update()
@@ -146,7 +160,7 @@ class Tetris:
             min_dist = min(HEIGHT-block.rect.bottom,min_dist)
             for sprite in self.all_sprites:
                 diff = sprite.rect.top - block.rect.bottom
-                if block.rect.x == sprite.rect.x and diff > 0:
+                if block.rect.x == sprite.rect.x and diff >= 0:
                     min_dist = min(min_dist,diff)
         for block in self.block.piece:
             shadow = pg.Surface((TILE_SIZE,TILE_SIZE))
@@ -200,7 +214,6 @@ class Tetris:
                         paused = False
             pg.display.update()
     def update_score(self, screen, score):
-        #print("here")
         font = pg.font.SysFont("Times New Roman",FONT_SIZE)
         text = font.render("Score:",True,WHITE)
         textRect = text.get_rect()

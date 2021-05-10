@@ -12,7 +12,7 @@ class BlockTypes:
     def __init__(self,count,block_type):
         length = GAME_PIECES[block_type]["Length"]
         self.x = (random.randint(INFO_WIDTH,GRID_WIDTH-length)+0.5)*TILE_SIZE
-        self.y = -TILE_SIZE/2
+        self.y = 0
         self.size = GAME_PIECES[block_type]["Size"]
         self.pos = 0
         self.coord = GAME_PIECES[block_type]["Coord"]
