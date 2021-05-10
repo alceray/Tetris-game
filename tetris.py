@@ -8,7 +8,7 @@ class Tetris:
         pg.init()
         self.screen = pg.display.set_mode(SCREEN_SIZE)
         self.clock = pg.time.Clock()
-        # pg.key.set_repeat(KEY_DELAY,KEY_INTERVAL)
+        self.running = True
     def draw_grid(self):
         for x in range(SIDE_WIDTH,WIDTH,TILE_SIZE):
             pg.draw.line(self.screen,DARK_GREY,(x,0),(x,HEIGHT))
@@ -22,7 +22,7 @@ class Tetris:
         self.block = BlockTypes(self.count, self.type)
         self.hard_drop = False
         self.add_block = False
-        self.running = True
+        self.playing = True
         self.left = False
         self.right = False
         self.z = False
@@ -34,7 +34,7 @@ class Tetris:
         self.add_block_cd = 10*COOLDOWN_TIME
         self.font = pg.font.SysFont("Times New Roman",FONT_SIZE)
         self.pause_time = 0
-        while self.running:
+        while self.playing:
             self.clock.tick(FPS)
             self.draw_grid()
             self.events()
@@ -43,10 +43,11 @@ class Tetris:
     def events(self):
         for event in pg.event.get():
             if event.type == pg.QUIT:
+                self.playing = False
                 self.running = False
             elif event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
-                    self.end_game(self.score, self.font)
+                    self.end_screen()
                 if event.key == pg.K_LEFT:
                     self.left = True
                 if event.key == pg.K_RIGHT:
@@ -80,11 +81,11 @@ class Tetris:
         if self.cooldown < 0:
             if self.left:
                 self.block.move_left(self.all_sprites)
-                self.cooldown += COOLDOWN_TIME
+                self.cooldown += 1.2*COOLDOWN_TIME
                 self.key_count += 1
             if self.right:
                 self.block.move_right(self.all_sprites)
-                self.cooldown += COOLDOWN_TIME
+                self.cooldown += 1.2*COOLDOWN_TIME
                 self.key_count += 1
             if self.drop:
                 self.block.drop(self.all_sprites)
@@ -128,9 +129,8 @@ class Tetris:
     def update(self):
         self.add_block = self.block.update(self.all_sprites,self.block.speed)
         self.line_clear()
-        #print(self.add_block_cd)
-        if self.hard_drop or (self.add_block and self.add_block_cd < 0 and self.holding_key())\
-            or (self.add_block and self.add_block_cd == 0):
+        if self.hard_drop or (self.add_block and self.add_block_cd < 0 and \
+            self.holding_key()) or (self.add_block and self.add_block_cd == 0):
             for block in self.block.piece:
                 self.all_sprites.add(block)
             self.reach_top()
@@ -147,12 +147,13 @@ class Tetris:
         self.screen.fill(BG_COLOUR)
         score_text_pos = (SIDE_WIDTH / 2, 4 * TILE_SIZE)
         score_val_pos = (SIDE_WIDTH / 2, 5.1 * TILE_SIZE)
-        self.print_score(self.screen, self.score, self.font, score_text_pos, score_val_pos)
+        self.print_score(score_text_pos, score_val_pos)
         time_text_pos = (SIDE_WIDTH / 2, 6.5 * TILE_SIZE)
         time_val_pos = (SIDE_WIDTH / 2, 7.6 * TILE_SIZE)
-        self.print_time(self.screen, self.pause_time, self.font, time_text_pos, time_val_pos)
-        for sprite in self.all_sprites:
-            self.screen.blit(sprite.surf,sprite.rect)
+        self.print_time(time_text_pos, time_val_pos)
+        if self.add_block:
+            for sprite in self.all_sprites:
+                self.screen.blit(sprite.surf,sprite.rect)
         if not self.add_block:
             self.draw_block_shadow()
         self.draw_grid()
@@ -200,13 +201,13 @@ class Tetris:
     def reach_top(self):
         for sprite in self.all_sprites:
             if sprite.rect.top == 0:
-                self.end_game(self.score, self.font)
+                self.end_screen()
                 break
     def pause(self, font):
         initial_time = pg.time.get_ticks()
         final_time = pg.time.get_ticks()
         paused = True
-        self.screen.fill(BLACK)
+        self.screen.fill(BG_COLOUR)
         text = font.render("Press Shift to continue",True,WHITE)
         self.screen.blit(text,(90,(HEIGHT-FONT_SIZE)/2))
         while paused:
@@ -221,34 +222,34 @@ class Tetris:
                         paused = False
             self.pause_time += (final_time - initial_time)
             pg.display.update()
-    def print_score(self, screen, score, font, text_pos, val_pos):
-        text = font.render("Score",True,WHITE)
+    def print_score(self, text_pos, val_pos):
+        text = self.font.render("Score",True,WHITE)
         textRect = text.get_rect()
         textRect.center = text_pos
-        screen.blit(text,textRect)
-        val = font.render(str(score),True,WHITE)
+        self.screen.blit(text,textRect)
+        val = self.font.render(str(self.score),True,WHITE)
         valRect = val.get_rect()
         valRect.center = val_pos
-        screen.blit(val,valRect)
-    def print_time(self, screen, pause, font, text_pos, val_pos):
-        time = (pg.time.get_ticks() - pause) // 100
+        self.screen.blit(val,valRect)
+    def print_time(self, text_pos, val_pos):
+        time = (pg.time.get_ticks() - self.score) // 100
         decisec = time % 10
         sec = (time // 10) % 100
         minute = sec // 60
         sec = sec % 60
-        text = font.render("Time",True,WHITE)
+        text = self.font.render("Time",True,WHITE)
         textRect = text.get_rect()
         textRect.center = text_pos
-        screen.blit(text,textRect)
+        self.screen.blit(text,textRect)
         val_output = "{:02d}:{:02d}:{}"
-        val = font.render(val_output.format(minute, sec, decisec),True,WHITE)
+        val = self.font.render(val_output.format(minute, sec, decisec),True,WHITE)
         valRect = val.get_rect()
         valRect.center = val_pos
-        screen.blit(val,valRect)
-    def end_game(self, score, font):
+        self.screen.blit(val,valRect)
+    def end_screen(self):
         the_end = True
-        self.screen.fill(BLACK)
-        text = font.render("Game Over",True,RED)
+        self.screen.fill(BG_COLOUR)
+        text = self.font.render("Game Over",True,RED)
         textRect = text.get_rect()
         textRect.x = WIDTH / 2
         textRect.y = 3 * TILE_SIZE
@@ -256,27 +257,27 @@ class Tetris:
         self.screen.blit(text,textRect)
         score_text_pos = (WIDTH / 2, 5.5 * TILE_SIZE)
         score_val_pos = (WIDTH / 2, 6.5 * TILE_SIZE)
-        self.print_score(self.screen, score, font, score_text_pos, score_val_pos)
+        self.print_score(score_text_pos, score_val_pos)
         time_text_pos = (WIDTH / 2, 8 * TILE_SIZE)
         time_val_pos = (WIDTH / 2, 9 * TILE_SIZE)
-        self.print_time(self.screen, score, font, time_text_pos, time_val_pos)
+        self.print_time(time_text_pos, time_val_pos)
         quit_x = 8.5 * TILE_SIZE
         quit_y = 13 * TILE_SIZE
         button_width = 4.5 * TILE_SIZE
         button_height = 1.5 * TILE_SIZE
         restart_x = 1.5 * TILE_SIZE
         restart_y = quit_y
-        quit_text = font.render("Quit",True,BLACK)
+        quit_text = self.font.render("Quit",True,BLACK)
         quitRect = quit_text.get_rect()
         quitRect.x = quit_x + (button_width / 2)
         quitRect.y = quit_y + (button_height / 2)
         quitRect.center = (quitRect.x, quitRect.y)
-        restart_text = font.render("Restart",True,BLACK)
+        restart_text = self.font.render("Restart",True,BLACK)
         restartRect = restart_text.get_rect()
         restartRect.x = restart_x + (button_width / 2)
         restartRect.y = restart_y + (button_height / 2)
         restartRect.center = (restartRect.x, restartRect.y)
-        while self.running:
+        while self.playing:
             mouse = pg.mouse.get_pos()
             will_quit = quit_x <= mouse[0] <= quit_x + button_width and \
                 quit_y <= mouse[1] <= quit_y + button_height
@@ -298,21 +299,24 @@ class Tetris:
             self.screen.blit(restart_text,restartRect)
             for event in pg.event.get():
                 if event.type == pg.QUIT:
+                    self.playing = False
                     self.running = False
                 if event.type == pg.KEYDOWN:
-                    if event.key == pg.K_ESCAPE:
+                    if event.key == pg.K_ESCAPE or event.key == pg.K_q:
+                        self.playing = False
                         self.running = False
+                    if event.key == pg.K_r:
+                        self.playing = False
                 if event.type == pg.MOUSEBUTTONDOWN:
                     if will_restart:
-                        self.running = False
-                        pg.quit()
-                        t = Tetris()
-                        t.run()
+                        self.playing = False
                     if will_quit:
+                        self.playing = False
                         self.running = False
             pg.display.update()
 
 
 t = Tetris()
-t.run()
+while t.running:
+    t.run()
 pg.quit()
