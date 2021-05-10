@@ -208,7 +208,7 @@ class Tetris:
         paused = True
         self.screen.fill(BLACK)
         text = font.render("Press Shift to continue",True,WHITE)
-        self.screen.blit(text,(100,(HEIGHT-FONT_SIZE)/2))
+        self.screen.blit(text,(90,(HEIGHT-FONT_SIZE)/2))
         while paused:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
@@ -222,7 +222,7 @@ class Tetris:
             self.pause_time += (final_time - initial_time)
             pg.display.update()
     def print_score(self, screen, score, font, text_pos, val_pos):
-        text = font.render("Score:",True,WHITE)
+        text = font.render("Score",True,WHITE)
         textRect = text.get_rect()
         textRect.center = text_pos
         screen.blit(text,textRect)
@@ -236,7 +236,7 @@ class Tetris:
         sec = (time // 10) % 100
         minute = sec // 60
         sec = sec % 60
-        text = font.render("Time:",True,WHITE)
+        text = font.render("Time",True,WHITE)
         textRect = text.get_rect()
         textRect.center = text_pos
         screen.blit(text,textRect)
@@ -248,21 +248,17 @@ class Tetris:
     def end_game(self, score, font):
         the_end = True
         self.screen.fill(BLACK)
-        text = font.render("THE END",True,RED)
+        text = font.render("Game Over",True,RED)
         textRect = text.get_rect()
         textRect.x = WIDTH / 2
-        textRect.y = 1.5 * TILE_SIZE
+        textRect.y = 3 * TILE_SIZE
         textRect.center = (textRect.x, textRect.y)
         self.screen.blit(text,textRect)
-        results = font.render("Results:", True, WHITE)
-        resultRect = text.get_rect()
-        resultRect.center = (textRect.x, 100)
-        self.screen.blit(results,resultRect)
-        score_text_pos = (WIDTH / 2, 4.5 * TILE_SIZE)
-        score_val_pos = (WIDTH / 2, 5.5 * TILE_SIZE)
+        score_text_pos = (WIDTH / 2, 5.5 * TILE_SIZE)
+        score_val_pos = (WIDTH / 2, 6.5 * TILE_SIZE)
         self.print_score(self.screen, score, font, score_text_pos, score_val_pos)
-        time_text_pos = (WIDTH / 2, 7 * TILE_SIZE)
-        time_val_pos = (WIDTH / 2, 8 * TILE_SIZE)
+        time_text_pos = (WIDTH / 2, 8 * TILE_SIZE)
+        time_val_pos = (WIDTH / 2, 9 * TILE_SIZE)
         self.print_time(self.screen, score, font, time_text_pos, time_val_pos)
         quit_x = 8.5 * TILE_SIZE
         quit_y = 13 * TILE_SIZE
@@ -270,12 +266,12 @@ class Tetris:
         button_height = 1.5 * TILE_SIZE
         restart_x = 1.5 * TILE_SIZE
         restart_y = quit_y
-        quit_text = font.render("QUIT",True,BLACK)
+        quit_text = font.render("Quit",True,BLACK)
         quitRect = quit_text.get_rect()
         quitRect.x = quit_x + (button_width / 2)
         quitRect.y = quit_y + (button_height / 2)
         quitRect.center = (quitRect.x, quitRect.y)
-        restart_text = font.render("RESTART",True,BLACK)
+        restart_text = font.render("Restart",True,BLACK)
         restartRect = restart_text.get_rect()
         restartRect.x = restart_x + (button_width / 2)
         restartRect.y = restart_y + (button_height / 2)
