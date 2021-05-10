@@ -11,7 +11,7 @@ class Block(pg.sprite.Sprite):
 class BlockTypes:
     def __init__(self,count,block_type):
         length = GAME_PIECES[block_type]["Length"]
-        self.x = (random.randint(0,GRID_WIDTH-length)+0.5)*TILE_SIZE
+        self.x = (random.randint(INFO_WIDTH,GRID_WIDTH-length)+0.5)*TILE_SIZE
         self.y = -TILE_SIZE/2
         self.size = GAME_PIECES[block_type]["Size"]
         self.pos = 0
@@ -31,7 +31,7 @@ class BlockTypes:
             self.piece[i].rect.center = (self.x+self.coord[self.pos][i][0]*TILE_SIZE, \
                 self.y-self.coord[self.pos][i][1]*TILE_SIZE)
     def colliding(self,b,group):
-        if b.rect.left < 0:
+        if b.rect.left < SIDE_WIDTH:
             return True
         if b.rect.right > WIDTH:
             return True
