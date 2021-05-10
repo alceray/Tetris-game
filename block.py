@@ -80,7 +80,7 @@ class BlockTypes:
             min_dist = min(HEIGHT - block.rect.bottom, min_dist)
             for sprite in group:
                 if block.rect.x == sprite.rect.x and \
-                    block.rect.bottom < sprite.rect.top:
+                    block.rect.bottom <= sprite.rect.top:
                     new_dist = sprite.rect.top - block.rect.bottom
                     min_dist = min(min_dist,new_dist)
         for block in self.piece:
