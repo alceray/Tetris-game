@@ -200,7 +200,7 @@ class Tetris:
     def reach_top(self):
         for sprite in self.all_sprites:
             if sprite.rect.top == 0:
-                self.running = False
+                self.end_game(self.score, self.font)
                 break
     def pause(self, font):
         initial_time = pg.time.get_ticks()
