@@ -8,7 +8,7 @@ class Tetris:
         pg.init()
         self.screen = pg.display.set_mode(SCREEN_SIZE)
         self.clock = pg.time.Clock()
-        self.running = True
+        self.time = 0
     def draw_grid(self):
         for x in range(SIDE_WIDTH,WIDTH,TILE_SIZE):
             pg.draw.line(self.screen,DARK_GREY,(x,0),(x,HEIGHT))
@@ -44,7 +44,6 @@ class Tetris:
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 self.playing = False
-                self.running = False
             elif event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
                     self.end_screen()
@@ -232,9 +231,11 @@ class Tetris:
         valRect.center = val_pos
         self.screen.blit(val,valRect)
     def print_time(self, text_pos, val_pos):
-        time = (pg.time.get_ticks() - self.score) // 100
-        decisec = time % 10
-        sec = (time // 10) % 100
+        print(self.time)
+        self.time = (pg.time.get_ticks() - self.score - self.time) // 100
+        print(self.time)
+        decisec = self.time % 10
+        sec = (self.time // 10) % 100
         minute = sec // 60
         sec = sec % 60
         text = self.font.render("Time",True,WHITE)
@@ -300,23 +301,22 @@ class Tetris:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     self.playing = False
-                    self.running = False
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_ESCAPE or event.key == pg.K_q:
                         self.playing = False
-                        self.running = False
                     if event.key == pg.K_r:
                         self.playing = False
                 if event.type == pg.MOUSEBUTTONDOWN:
                     if will_restart:
                         self.playing = False
+                        pg.quit()
+                        t = Tetris()
+                        t.run()
                     if will_quit:
                         self.playing = False
-                        self.running = False
             pg.display.update()
 
 
 t = Tetris()
-while t.running:
-    t.run()
+t.run()
 pg.quit()
