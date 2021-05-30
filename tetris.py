@@ -149,9 +149,9 @@ class Tetris:
         time_text_pos = (SIDE_WIDTH / 2, 6.5 * TILE_SIZE)
         time_val_pos = (SIDE_WIDTH / 2, 7.6 * TILE_SIZE)
         self.print_time(time_text_pos, time_val_pos)
-        if self.add_block:
-            for sprite in self.all_sprites:
-                self.screen.blit(sprite.surf,sprite.rect)
+        # if self.add_block:
+        for sprite in self.all_sprites:
+            self.screen.blit(sprite.surf,sprite.rect)
         if not self.add_block:
             self.draw_block_shadow()
         self.draw_grid()
