@@ -8,6 +8,8 @@ class Tetris:
         pg.init()
         self.screen = pg.display.set_mode(SCREEN_SIZE)
         self.clock = pg.time.Clock()
+        self.font = pg.font.SysFont("Times New Roman",FONT_SIZE)
+        self.playing = True
     def draw_grid(self):
         for x in range(SIDE_WIDTH,WIDTH,TILE_SIZE):
             pg.draw.line(self.screen,DARK_GREY,(x,0),(x,HEIGHT))
@@ -21,7 +23,6 @@ class Tetris:
         self.block = BlockTypes(self.count, self.type)
         self.hard_drop = False
         self.add_block = False
-        self.playing = True
         self.left = False
         self.right = False
         self.z = False
@@ -31,7 +32,6 @@ class Tetris:
         self.cooldown = 0
         self.rotate_cd = 0
         self.add_block_cd = 10*COOLDOWN_TIME
-        self.font = pg.font.SysFont("Times New Roman",FONT_SIZE)
         self.pause_time = 0
         while self.playing:
             self.clock.tick(FPS)
@@ -315,8 +315,21 @@ class Tetris:
                     if will_quit:
                         self.playing = False
             pg.display.update()
+    def start_screen(self):
+        self.screen.fill(BG_COLOUR)
+        text = self.font.render("Press any key to start game",True,BLUE)
+        textRect = text.get_rect()
+        textRect.center = (WIDTH/2, 10*TILE_SIZE)
+        self.screen.blit(text,textRect)
+        while self.playing:
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    self.playing = False
+                if event.type == pg.KEYDOWN:
+                    self.run()
+            pg.display.update()
 
 
 t = Tetris()
-t.run()
+t.start_screen()
 pg.quit()
